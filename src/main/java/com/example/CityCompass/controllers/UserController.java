@@ -29,14 +29,19 @@ public class UserController {
 
     }
 
-//    @PostMapping("/register/serviceProvider")
-//    public String createServiceProvider(@Valid @RequestBody SpCreateRequest spCreateRequest){
-//
-//    }
+    @PostMapping("/register/serviceProvider")
+    public String createServiceProvider(@Valid @RequestBody SpCreateRequest spCreateRequest){
+        return this.userService.createSpUser(spCreateRequest);
+    }
 
     @GetMapping("/details")
     public Users getUserDetails(HttpServletRequest httpServletRequest){
         return userService.getDetails(httpServletRequest.getAttribute("username").toString());
+    }
+
+    @PostMapping("/admin/createAdmin")
+    public String createAdmin(@Valid @RequestBody UserCreateRequest userCreateRequest){
+        return this.userService.createAdmin(userCreateRequest);
     }
 
 }

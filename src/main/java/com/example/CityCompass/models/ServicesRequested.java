@@ -26,7 +26,13 @@ public class ServicesRequested {
     @ManyToOne
     private ServicesProvided servicesProvided;
 
-    private Status status;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Permission permission;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRequestStatus userRequestStatus;
 
 
 

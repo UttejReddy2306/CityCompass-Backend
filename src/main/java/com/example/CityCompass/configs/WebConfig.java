@@ -1,5 +1,6 @@
 package com.example.CityCompass.configs;
 
+import com.example.CityCompass.models.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +25,12 @@ public class WebConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(x -> x.disable())
-                .authorizeHttpRequests(a -> a.requestMatchers("/user/register").permitAll())
-                .authorizeHttpRequests(a -> a.requestMatchers("/user/login").permitAll())
-                .authorizeHttpRequests(a -> a.anyRequest().authenticated())
+                .authorizeHttpRequests(a -> a.requestMatchers("/user/register/**").permitAll())
+                .authorizeHttpRequests(a -> a.requestMatchers("/user/login").permitAll()
+                        .requestMatchers("user/admin/**").hasAuthority(UserType.ADMIN.name())
+                        .requestMatchers("admin/**").hasAuthority(UserType.ADMIN.name())
+                )
+                .authorizeHttpRequests(a -> a.anyRequest().permitAll())
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -34,6 +38,7 @@ public class WebConfig {
 
         return http.build();
     }
+
 
     @Bean
     PasswordEncoder getPE (){

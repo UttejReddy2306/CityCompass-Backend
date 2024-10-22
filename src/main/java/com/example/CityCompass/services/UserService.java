@@ -1,7 +1,9 @@
 package com.example.CityCompass.services;
 
+import com.example.CityCompass.dtos.SpCreateRequest;
 import com.example.CityCompass.dtos.UserCreateRequest;
 import com.example.CityCompass.dtos.UserSignInRequest;
+import com.example.CityCompass.models.ServicesProvided;
 import com.example.CityCompass.models.UserType;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.UserRepository;
@@ -18,6 +20,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ServiceProvidedService serviceProvidedService;
 
     @Autowired
     JwtService jwtService;
@@ -51,5 +56,27 @@ public class UserService {
 
     public Users getDetails(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public String createSpUser(SpCreateRequest spCreateRequest) {
+        Users users = spCreateRequest.toUser(spCreateRequest);
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        users.setUserType(UserType.SERVICE_PROVIDER);
+        users = this.userRepository.save(users);
+        serviceProvidedService.createSp(users,spCreateRequest);
+        return "SUCCESSFUL";
+    }
+
+    public String createAdmin(UserCreateRequest userCreateRequest) {
+        Users users = userCreateRequest.toUser(userCreateRequest);
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        users.setUserType(UserType.ADMIN);
+        this.userRepository.save(users);
+        return "SUCCESSFUL";
+    }
+
+
+    public Users getUser(String username) {
+        return this.userRepository.findByUsername(username);
     }
 }

@@ -10,6 +10,7 @@ public enum Services {
 
     Cleaning,
 
+    PestControl,
     SPAS;
 
 
