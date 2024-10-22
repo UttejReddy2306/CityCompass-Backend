@@ -20,38 +20,38 @@ public class BookServiceController {
     @Autowired
     ServiceRequestedService serviceRequestedService;
 
-    @GetMapping("/getService/{service}")
+    @GetMapping("/public/getService/{service}")
     public List<ServicesProvided> getService(@PathVariable("service") String service){
         return serviceProvidedService.getService(Services.valueOf(service));
     }
 
-    @GetMapping("/getAllService")
+    @GetMapping("/public/getAllService")
     public List<ServicesProvided> getAllService(){
         return  serviceProvidedService.getAllServices();
     }
 
-    @PostMapping("/requestService/{serviceId}")
+    @PostMapping("/all/requestService/{serviceId}")
     public String requestService(@PathVariable("serviceId") Integer serviceId, HttpServletRequest request)
     {
         return serviceRequestedService.createRequest(serviceId,request.getAttribute("username").toString());
     }
 
-    @GetMapping("/getAllProviderRequests")
+    @GetMapping("/provider/getAllProviderRequests")
     public List<ServicesRequested> getAllProviderRequests(HttpServletRequest request){
         return this.serviceRequestedService.getAllProviderRequests(request.getAttribute("username").toString());
     }
 
-    @GetMapping("/getAllRequests")
+    @GetMapping("/all/getAllRequests")
     public List<ServicesRequested> getAllServicesRequestedByUser(HttpServletRequest request){
         return this.serviceRequestedService.getAllServicesRequestedByUser(request.getAttribute("username").toString());
     }
 
-    @PatchMapping("/AcceptResponse/{srId}")
+    @PatchMapping("/provider/AcceptResponse/{srId}")
     public String AcceptResponse(@PathVariable("srId") Integer srId){
         return this.serviceRequestedService.AcceptResponse(srId);
     }
 
-    @PatchMapping("/RejectResponse/{srId}")
+    @PatchMapping("/provider/RejectResponse/{srId}")
     public String RejectResponse(@PathVariable("srId") Integer srId){
         return this.serviceRequestedService.RejectResponse(srId);
     }

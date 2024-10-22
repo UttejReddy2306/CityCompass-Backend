@@ -18,23 +18,23 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/public/register")
     public String createUser(@Valid @RequestBody UserCreateRequest userCreateRequest){
         return this.userService.createUser(userCreateRequest);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/public/login")
     public String longinUser(@Valid @RequestBody UserSignInRequest userSignInRequest, HttpServletResponse httpServletResponse){
         return this.userService.verify(userSignInRequest , httpServletResponse);
 
     }
 
-    @PostMapping("/register/serviceProvider")
+    @PostMapping("/public/register/serviceProvider")
     public String createServiceProvider(@Valid @RequestBody SpCreateRequest spCreateRequest){
         return this.userService.createSpUser(spCreateRequest);
     }
 
-    @GetMapping("/details")
+    @GetMapping("/all/details")
     public Users getUserDetails(HttpServletRequest httpServletRequest){
         return userService.getDetails(httpServletRequest.getAttribute("username").toString());
     }

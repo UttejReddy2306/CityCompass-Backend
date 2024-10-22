@@ -34,11 +34,14 @@ public class ServiceRequestedService {
     }
 
     public List<ServicesRequested> getAllProviderRequests(String username) {
-        return serviceRequestedRepository.findByProvidedUserAndUserRequestStatus(username,UserRequestStatus.REQUESTED);
+        Users users = this.userService.getUser(username);
+
+        return serviceRequestedRepository.findByProvidedUserAndUserRequestStatus(users,UserRequestStatus.REQUESTED);
     }
 
     public List<ServicesRequested> getAllServicesRequestedByUser(String username) {
-        return serviceRequestedRepository.findByRequestedUser(username);
+        Users users = this.userService.getUser(username);
+        return serviceRequestedRepository.findByRequestedUser(users);
     }
 
     public String AcceptResponse(Integer srId) {
