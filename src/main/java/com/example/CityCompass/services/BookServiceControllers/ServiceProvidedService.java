@@ -1,8 +1,9 @@
-package com.example.CityCompass.services;
+package com.example.CityCompass.services.BookServiceControllers;
 
 import com.example.CityCompass.dtos.SpCreateRequest;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.repositories.ServiceProvidedRepository;
+import com.example.CityCompass.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,24 +15,29 @@ public class ServiceProvidedService {
     @Autowired
     ServiceProvidedRepository serviceProvidedRepository;
 
+    @Autowired
+    EmailService emailService;
+
 
     public void createSp(Users users, SpCreateRequest spCreateRequest) {
         ServicesProvided servicesProvided = spCreateRequest.toServiceProvided(spCreateRequest);
         servicesProvided.setUser(users);
         this.serviceProvidedRepository.save(servicesProvided);
+
+
     }
 
     public List<ServicesProvided> getAllPendingSp() {
         return this.serviceProvidedRepository.findByPermission(Permission.Pending);
     }
 
-    public String allowPermission(Integer spId) {
+    public String updatePermission(Integer spId,String decision) {
 
         ServicesProvided servicesProvided = serviceProvidedRepository.findById(spId).orElse(null);
         if(servicesProvided != null) {
-            servicesProvided.setPermission(Permission.Accepted);
+            servicesProvided.setPermission(decision.equals("accepted")?Permission.Accepted : Permission.Rejected);
             serviceProvidedRepository.save(servicesProvided);
-            return "AcceptedSuccessful";
+            return "Successful";
         }
         return "Invalid Id";
 
@@ -39,15 +45,8 @@ public class ServiceProvidedService {
 
     }
 
-    public String declinePermission(Integer spId) {
-        ServicesProvided servicesProvided = serviceProvidedRepository.findById(spId).orElse(null);
-        if(servicesProvided != null) {
-            servicesProvided.setPermission(Permission.Rejected);
-            serviceProvidedRepository.save(servicesProvided);
-            return "RejectedSuccessful";
-        }
-        return "Invalid Id";
-    }
+
+
 
     public List<ServicesProvided> getService(Services services) {
         return serviceProvidedRepository.findByServiceAndStatusAndPermission(services, Status.ACTIVE ,Permission.Accepted);

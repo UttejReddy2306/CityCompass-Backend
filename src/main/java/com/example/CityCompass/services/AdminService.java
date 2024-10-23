@@ -1,6 +1,7 @@
 package com.example.CityCompass.services;
 
 import com.example.CityCompass.models.ServicesProvided;
+import com.example.CityCompass.services.BookServiceControllers.ServiceProvidedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,9 @@ public class AdminService {
         return serviceProvidedService.getAllPendingSp();
     }
 
-    public String allowPermission(Integer spId) {
-        return serviceProvidedService.allowPermission(spId);
+    public String updatePermission(Integer spId, String decision) {
+        return serviceProvidedService.updatePermission(spId,decision);
     }
 
-    public String declinePermission(Integer spId) {
-        return serviceProvidedService.declinePermission(spId);
-    }
+
 }

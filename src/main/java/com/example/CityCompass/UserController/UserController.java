@@ -1,4 +1,4 @@
-package com.example.CityCompass.controllers;
+package com.example.CityCompass.UserController;
 
 import com.example.CityCompass.dtos.SpCreateRequest;
 import com.example.CityCompass.dtos.UserCreateRequest;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("")
 @RequestMapping("/user")
 public class UserController {
 
