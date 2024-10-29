@@ -43,13 +43,23 @@ public class ServiceProvidedService {
     public String updatePermission(Integer spId,String decision) {
 
         ServicesProvided servicesProvided = serviceProvidedRepository.findById(spId).orElse(null);
-        if(servicesProvided != null) {
-            servicesProvided.setPermission(decision.equals("accepted")?Permission.Accepted : Permission.Rejected);
-            serviceProvidedRepository.save(servicesProvided);
-            return "Successful";
-        }
-        return "Invalid Id";
+        if (servicesProvided != null) {
+            if ("accepted".equalsIgnoreCase(decision)) {
+                this.serviceProvidedRepository.updatePermission(Permission.Accepted,servicesProvided.getId());
+            } else if ("rejected".equalsIgnoreCase(decision)) {
+                this.serviceProvidedRepository.updatePermission(Permission.Rejected,servicesProvided.getId());
+            } else {
+                return "Invalid decision value provided.";
+            }
 
+            // Save the updated entity
+
+
+
+            return "Permission updated successfully.";
+        } else {
+            return "Service provided entry not found.";
+        }
 
 
     }

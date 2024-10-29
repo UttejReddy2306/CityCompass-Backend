@@ -6,5 +6,5 @@ public enum Permission {
 
     Pending,
 
-    Rejected;
+    Rejected
 }

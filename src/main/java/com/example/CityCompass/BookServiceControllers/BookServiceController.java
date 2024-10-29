@@ -1,8 +1,9 @@
 package com.example.CityCompass.BookServiceControllers;
-
 import com.example.CityCompass.RequestDtos.ServiceRequestDto;
 import com.example.CityCompass.RequestDtos.SlotDto;
-import com.example.CityCompass.RequestDtos.TimeSlotDto;
+import com.example.CityCompass.ResponseDtos.DateSlotDto;
+import com.example.CityCompass.ResponseDtos.ServicesProvidedDto;
+import com.example.CityCompass.ResponseDtos.TimeSlotsDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.services.BookServices.ServiceProvidedService;
 import com.example.CityCompass.services.BookServices.ServiceRequestedService;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/bookServices")
 public class BookServiceController {
@@ -27,13 +30,44 @@ public class BookServiceController {
     UserService userService;
 
     @GetMapping("/public/getService/{service}")
-    public List<ServicesProvided> getService(@PathVariable("service") String service){
-        return serviceProvidedService.getService(Services.valueOf(service));
+    public List<ServicesProvidedDto> getService(@PathVariable("service") String service){
+        return serviceProvidedService.getService(Services.valueOf(service)).stream().map(x -> ServicesProvidedDto.builder()
+                .serviceId(x.getId())
+                .name(x.getUser().getName())
+                .serviceName(x.getService().name())
+                .experience(x.getExperience())
+                .charge(x.getCharge())
+                .dateSlotList(x.getDateSlotList().stream().map(y -> DateSlotDto.builder()
+                        .dateSlotId(y.getId())
+                        .localDate(y.getLocalDate())
+                        .timeSlotsDtoList(y.getTimeSlotList().stream().map(z -> TimeSlotsDto.builder()
+                                .localTime(z.getStartTime())
+                                .timeSlotId(z.getId())
+                                .isAvailable(z.getIsAvailable())
+                                .build()).collect(Collectors.toList()))
+                        .build()).collect(Collectors.toList()))
+                .build()).collect(Collectors.toList());
     }
 
     @GetMapping("/public/getAllService")
-    public List<ServicesProvided> getAllService(){
-        return  serviceProvidedService.getAllServices();
+    public List<ServicesProvidedDto> getAllService(){
+        return  serviceProvidedService.getAllServices().stream().map(x -> ServicesProvidedDto.builder()
+                .serviceId(x.getId())
+                .name(x.getUser().getName())
+                .serviceName(x.getService().name())
+                .experience(x.getExperience())
+                .charge(x.getCharge())
+                .dateSlotList(x.getDateSlotList().stream().map(y -> DateSlotDto.builder()
+                        .dateSlotId(y.getId())
+                        .localDate(y.getLocalDate())
+                        .timeSlotsDtoList(y.getTimeSlotList().stream().map(z -> TimeSlotsDto.builder()
+                                .localTime(z.getStartTime())
+                                .timeSlotId(z.getId())
+                                .isAvailable(z.getIsAvailable())
+                                .build()).collect(Collectors.toList()))
+                        .build()).collect(Collectors.toList()))
+                .build()).collect(Collectors.toList());
+
     }
 
     @PostMapping("/all/requestService")

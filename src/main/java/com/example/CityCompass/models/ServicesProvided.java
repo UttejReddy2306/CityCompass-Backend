@@ -38,6 +38,7 @@ public class ServicesProvided {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Permission permission;
