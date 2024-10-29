@@ -1,4 +1,4 @@
-package com.example.CityCompass.dtos;
+package com.example.CityCompass.RequestDtos;
 
 import com.example.CityCompass.models.*;
 import jakarta.validation.constraints.NotBlank;

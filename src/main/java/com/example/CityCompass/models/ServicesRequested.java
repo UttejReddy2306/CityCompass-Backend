@@ -1,5 +1,6 @@
 package com.example.CityCompass.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,10 +40,12 @@ public class ServicesRequested {
     @Enumerated(EnumType.STRING)
     private UserRequestStatus userRequestStatus;
 
+    @JoinColumn
+    @ManyToOne
+    @JsonIgnoreProperties("dateSlot")
+    private TimeSlot timeSlot;
 
-
-
-
+    private String requestedUserProblem;
 
     @CreationTimestamp
     private Date createdOn;

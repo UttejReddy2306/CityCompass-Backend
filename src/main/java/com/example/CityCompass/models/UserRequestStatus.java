@@ -4,5 +4,7 @@ public enum UserRequestStatus {
 
     REQUESTED,
 
+    APPROVED,
+
     CANCELLED;
 }

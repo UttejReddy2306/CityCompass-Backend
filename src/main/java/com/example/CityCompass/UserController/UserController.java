@@ -1,8 +1,8 @@
 package com.example.CityCompass.UserController;
 
-import com.example.CityCompass.dtos.SpCreateRequest;
-import com.example.CityCompass.dtos.UserCreateRequest;
-import com.example.CityCompass.dtos.UserSignInRequest;
+import com.example.CityCompass.RequestDtos.SpCreateRequest;
+import com.example.CityCompass.RequestDtos.UserCreateRequest;
+import com.example.CityCompass.RequestDtos.UserSignInRequest;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;

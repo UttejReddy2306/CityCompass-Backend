@@ -1,12 +1,13 @@
 package com.example.CityCompass.services;
 
-import com.example.CityCompass.dtos.SpCreateRequest;
-import com.example.CityCompass.dtos.UserCreateRequest;
-import com.example.CityCompass.dtos.UserSignInRequest;
+import com.example.CityCompass.RequestDtos.SlotDto;
+import com.example.CityCompass.RequestDtos.SpCreateRequest;
+import com.example.CityCompass.RequestDtos.UserCreateRequest;
+import com.example.CityCompass.RequestDtos.UserSignInRequest;
 import com.example.CityCompass.models.UserType;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.UserRepository;
-import com.example.CityCompass.services.BookServiceControllers.ServiceProvidedService;
+import com.example.CityCompass.services.BookServices.ServiceProvidedService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -79,4 +82,11 @@ public class UserService {
     public Users getUser(String username) {
         return this.userRepository.findByUsername(username);
     }
+
+    public String createSlot(Integer serviceId, List<SlotDto> slotDtoList, String username) {
+        Users users = getUser(username);
+        return this.serviceProvidedService.createSlot(serviceId,slotDtoList,users);
+    }
+
+
 }

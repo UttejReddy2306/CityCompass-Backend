@@ -1,12 +1,15 @@
-package com.example.CityCompass.services.BookServiceControllers;
+package com.example.CityCompass.services.BookServices;
 
-import com.example.CityCompass.dtos.SpCreateRequest;
+import com.example.CityCompass.RequestDtos.SpCreateRequest;
+import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.repositories.ServiceProvidedRepository;
 import com.example.CityCompass.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -17,6 +20,12 @@ public class ServiceProvidedService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    TimeSlotService timeSlotService;
+
+    @Autowired
+    DateSlotService dateSlotService;
 
 
     public void createSp(Users users, SpCreateRequest spCreateRequest) {
@@ -58,5 +67,30 @@ public class ServiceProvidedService {
 
     public ServicesProvided getProvider(Integer serviceId) {
         return serviceProvidedRepository.findById(serviceId).orElse(null);
+    }
+
+    public String createSlot(Integer serviceId, List<SlotDto> slotDtoList, Users users) {
+        ServicesProvided servicesProvided = this.serviceProvidedRepository.findById(serviceId).orElseThrow(() ->
+                new IllegalArgumentException("Invalid Service"));
+
+        if(users != servicesProvided.getUser()) return "UnAuthorized";
+        return dateSlotService.createSlot(servicesProvided,slotDtoList);
+
+    }
+
+
+    public ServicesProvided findById(Integer serviceId) {
+        return this.serviceProvidedRepository.findById(serviceId).orElse(null);
+    }
+
+    public List<DateSlot> getAllTimeSlots(Integer serviceId) {
+        LocalDate localDate = LocalDate.now();
+        LocalTime localTime = LocalTime.now();
+        return this.dateSlotService.findDateSlotsWithAvailableTimes(serviceId,localDate,localTime);
+
+    }
+
+    public List<DateSlot> allDateTimeSlots(Integer serviceId) {
+        return this.dateSlotService.findByServicesProvidedId(serviceId);
     }
 }
