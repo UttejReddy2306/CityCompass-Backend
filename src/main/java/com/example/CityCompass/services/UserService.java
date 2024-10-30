@@ -1,6 +1,7 @@
 package com.example.CityCompass.services;
 
 
+
 import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.RequestDtos.SpCreateRequest;
 import com.example.CityCompass.RequestDtos.UserCreateRequest;
@@ -90,6 +91,7 @@ public class UserService {
         Users users = getUser(username);
         return this.serviceProvidedService.createSlot(serviceId,slotDtoList,users);
     }
+
 
 
 

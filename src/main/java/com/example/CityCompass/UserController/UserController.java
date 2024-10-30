@@ -52,4 +52,9 @@ public class UserController {
         return this.userService.createAdmin(userCreateRequest);
     }
 
+//    @PatchMapping("/provider/updateServiveDetails")
+//    public String updateServiceDetails(@RequestBody ServiceEditDto serviceEditDto, HttpServletRequest httpServletRequest){
+//        return this.userService.updateServiceDetails(serviceEditDto,httpServletRequest.getAttribute("username").toString());
+//    }
+
 }
