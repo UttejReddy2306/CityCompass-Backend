@@ -65,10 +65,10 @@ public class WebConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public ObjectMapper mapper(){
-        return new ObjectMapper();
-    }
+//    @Bean
+//    public ObjectMapper mapper(){
+//        return new ObjectMapper();
+//    }
 }
 
 //package com.example.CityCompass.configs;
