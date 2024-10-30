@@ -1,13 +1,16 @@
 package com.example.CityCompass.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -46,14 +49,18 @@ public class ServicesProvided {
     @CreationTimestamp
     private Date createdOn;
 
+
     @OneToMany(mappedBy = "servicesProvided")
     @JsonIgnoreProperties("servicesProvided")
     private List<DateSlot> dateSlotList;
 
+
     @UpdateTimestamp
     private Date updatedOn;
 
+
     private Boolean isSlotsAvailable;
+
 
 
 }

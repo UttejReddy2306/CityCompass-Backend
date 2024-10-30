@@ -1,5 +1,6 @@
 package com.example.CityCompass.services;
 
+
 import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.RequestDtos.SpCreateRequest;
 import com.example.CityCompass.RequestDtos.UserCreateRequest;
@@ -8,6 +9,7 @@ import com.example.CityCompass.models.UserType;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.UserRepository;
 import com.example.CityCompass.services.BookServices.ServiceProvidedService;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -83,10 +85,16 @@ public class UserService {
         return this.userRepository.findByUsername(username);
     }
 
+
     public String createSlot(Integer serviceId, List<SlotDto> slotDtoList, String username) {
         Users users = getUser(username);
         return this.serviceProvidedService.createSlot(serviceId,slotDtoList,users);
     }
 
+
+
+    public List<Users> getAll() {
+     return userRepository.findAll();
+    }
 
 }

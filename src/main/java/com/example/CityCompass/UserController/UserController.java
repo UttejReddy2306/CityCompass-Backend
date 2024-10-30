@@ -1,8 +1,10 @@
 package com.example.CityCompass.UserController;
 
+
 import com.example.CityCompass.RequestDtos.SpCreateRequest;
 import com.example.CityCompass.RequestDtos.UserCreateRequest;
 import com.example.CityCompass.RequestDtos.UserSignInRequest;
+
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +12,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
+
+
+
 @RestController
+
+
 @RequestMapping("/user")
 public class UserController {
 

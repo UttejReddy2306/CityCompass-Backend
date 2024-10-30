@@ -1,4 +1,5 @@
 package com.example.CityCompass.BookServiceControllers;
+
 import com.example.CityCompass.RequestDtos.ServiceRequestDto;
 import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.ResponseDtos.DateSlotDto;
@@ -10,13 +11,21 @@ import com.example.CityCompass.services.BookServices.ServiceRequestedService;
 import com.example.CityCompass.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+
+import com.example.CityCompass.models.Services;
+import com.example.CityCompass.models.ServicesProvided;
+import com.example.CityCompass.models.ServicesRequested;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
+
+
 @RestController
 @RequestMapping("/bookServices")
 public class BookServiceController {
@@ -74,7 +83,12 @@ public class BookServiceController {
     public String requestService(@Valid @RequestBody ServiceRequestDto serviceRequestDto, HttpServletRequest request)
     {
         return serviceRequestedService.createRequest(serviceRequestDto,request.getAttribute("username").toString());
+
+
     }
+
+
+
 
     @PatchMapping("/all/cancelService/{serviceId}")
     public String cancelService(@PathVariable("serviceId") Integer serviceId, HttpServletRequest request)
@@ -93,6 +107,7 @@ public class BookServiceController {
     }
 
     @PatchMapping("/provider/updateResponse/{srId}/{decision}")
+
     public String updateResponse(@PathVariable("srId") Integer srId, @PathVariable("decision") String decision , HttpServletRequest request){
         return this.serviceRequestedService.updateResponse(srId,decision,request.getAttribute("username").toString());
     }
@@ -116,7 +131,5 @@ public class BookServiceController {
     public List<DateSlot> allDateTimeSlots(@PathVariable("serviceId") Integer serviceId){
         return this.serviceProvidedService.allDateTimeSlots(serviceId);
     }
-
-
 
 }
