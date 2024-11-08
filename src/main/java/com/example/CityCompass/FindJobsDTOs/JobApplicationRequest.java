@@ -7,6 +7,7 @@ import com.example.CityCompass.models.Users;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -19,9 +20,9 @@ public class JobApplicationRequest {
     private Integer jobId;
 
     @NotBlank
-    private String resume;
+    private MultipartFile resume;
 
-    private String coverLetter;
+    private MultipartFile coverLetter;
 
     @Builder.Default
     private ApplicationStatus applicationStatus = ApplicationStatus.SUBMITTED;
@@ -31,8 +32,6 @@ public class JobApplicationRequest {
                 .jobPosting(jobPosting)
                 .applicant(applicant)
                 .status(this.applicationStatus != null ? this.applicationStatus : ApplicationStatus.SUBMITTED)
-                .resume(this.resume)
-                .coverLetter(this.coverLetter != null ? this.coverLetter : "")
                 .build();
     }
 }

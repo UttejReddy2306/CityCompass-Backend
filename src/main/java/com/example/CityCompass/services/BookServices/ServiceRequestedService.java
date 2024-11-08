@@ -44,6 +44,7 @@ public class ServiceRequestedService {
                  .providedUser(providerUser)
                  .timeSlot(timeSlot)
                  .requestedUserProblem(serviceRequestDto.getUserReason())
+                 .address(serviceRequestDto.getAddress())
                  .userRequestStatus(UserRequestStatus.REQUESTED)
                  .permission(Permission.Pending)
                  .build();

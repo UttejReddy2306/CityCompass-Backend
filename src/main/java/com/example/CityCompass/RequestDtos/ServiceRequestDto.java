@@ -16,6 +16,8 @@ public class ServiceRequestDto {
 
     private String userReason;
 
+    @NotBlank
+    private String address;
 
     @NotNull
     private Integer localTimeId;

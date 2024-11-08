@@ -33,6 +33,8 @@ public class ServicesRequestedDto {
 
     private Permission permission;
 
+    private String address;
+
     private UserRequestStatus userRequestStatus;
 
 

@@ -11,6 +11,7 @@ import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.FindJobs.JobApplicationRepository;
 import com.example.CityCompass.repositories.FindJobs.JobPostRepository;
 import com.example.CityCompass.repositories.UserRepository;
+import com.example.CityCompass.services.S3Service;
 import com.example.CityCompass.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,11 @@ public class JobApplicationService {
     @Autowired
     UserService userService;
 
+
+    @Autowired
+    S3Service s3Service;
+
+
     public String createJobApplication(JobApplicationRequest jobApplicationRequest, String username) {
         JobPosting jobPosting = jobPostRepository.findById(jobApplicationRequest.getJobId()).orElse(null);
         Users applicant = userRepository.findByUsername(username);
@@ -44,6 +50,8 @@ public class JobApplicationService {
         JobApplication savedJobApplication = this.jobApplicationRepository.findByJobPostingAndApplicant(jobPosting,applicant);
         if(savedJobApplication != null) return "You already applied for this Job";
         JobApplication jobApplication = jobApplicationRequest.toJobApplication(jobPosting, applicant);
+        jobApplication.setResume(s3Service.createFile(jobApplicationRequest.getResume()));
+        jobApplication.setCoverLetter(s3Service.createFile(jobApplicationRequest.getCoverLetter()));
         jobApplicationRepository.save(jobApplication);
         return "Job application submitted successfully.";
     }

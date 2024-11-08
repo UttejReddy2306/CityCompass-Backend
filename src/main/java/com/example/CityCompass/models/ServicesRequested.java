@@ -51,6 +51,7 @@ public class ServicesRequested {
     private String requestedUserProblem;
 
 
+    private String address;
 
     @CreationTimestamp
     private Date createdOn;
