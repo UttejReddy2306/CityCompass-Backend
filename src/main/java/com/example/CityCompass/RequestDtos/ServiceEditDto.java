@@ -13,6 +13,7 @@ public class ServiceEditDto {
     private Integer serviceId;
 
     private String experience;
+
     private String charge;
 
     private Status status;

@@ -10,7 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class DeleteTimeSlotDto {
-    private Integer dateSlotId;
+    private Integer ServiceId;
 
-    private List<Integer> timeSlotIdList;
+    private List<Integer> localTimeSlotIdList;
+
+
 }

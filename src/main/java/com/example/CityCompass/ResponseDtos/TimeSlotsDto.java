@@ -1,6 +1,7 @@
 package com.example.CityCompass.ResponseDtos;
 
 import com.example.CityCompass.models.TimeSlot;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ public class TimeSlotsDto {
 
     private Integer timeSlotId;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime localTime;
 
     private Boolean isAvailable;

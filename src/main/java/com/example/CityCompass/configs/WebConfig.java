@@ -74,6 +74,9 @@
 package com.example.CityCompass.configs;
 
 import com.example.CityCompass.models.UserType;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -82,6 +85,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -117,7 +121,7 @@ public class WebConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(x -> x.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/user/all/details").hasAnyAuthority(UserType.USER.name(), UserType.SERVICE_PROVIDER.name(), UserType.ADMIN.name())
                         .requestMatchers("/user/admin/**").hasAuthority(UserType.ADMIN.name())
                         .requestMatchers("/user/public/**").permitAll()
@@ -129,6 +133,14 @@ public class WebConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/posts/**").hasAnyAuthority(UserType.USER.name(),UserType.ADMIN.name(),UserType.SERVICE_PROVIDER.name()))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/comments/**").hasAnyAuthority(UserType.USER.name(),UserType.ADMIN.name(),UserType.SERVICE_PROVIDER.name()))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/likes/**").hasAnyAuthority(UserType.USER.name(),UserType.ADMIN.name(),UserType.SERVICE_PROVIDER.name()))
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/jobPostings/all/**").hasAnyAuthority(UserType.USER.name(), UserType.JOB_PROVIDER.name(), UserType.ADMIN.name())
+                        .requestMatchers("/jobPostings/company/**").hasAnyAuthority( UserType.JOB_PROVIDER.name())
+                        .requestMatchers("/jobPostings/public/**").permitAll())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/jobApplications/all/**").hasAnyAuthority(UserType.USER.name(), UserType.JOB_PROVIDER.name(), UserType.ADMIN.name())
+                        .requestMatchers("/jobApplications/company/**").hasAnyAuthority( UserType.JOB_PROVIDER.name())
+                        .requestMatchers("/jobApplications/public/**").permitAll())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/saveJobs/all/**").hasAnyAuthority(UserType.USER.name(), UserType.JOB_PROVIDER.name(), UserType.ADMIN.name())
+                        .requestMatchers("/saveJobs/users/**").hasAnyAuthority( UserType.USER.name()))
                 .formLogin(withDefaults())
                 .httpBasic(withDefaults())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -145,6 +157,14 @@ public class WebConfig {
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return mapper;
     }
 }
 

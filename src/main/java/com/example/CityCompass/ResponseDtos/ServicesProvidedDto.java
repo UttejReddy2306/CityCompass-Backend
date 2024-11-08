@@ -1,6 +1,7 @@
 package com.example.CityCompass.ResponseDtos;
 
 import com.example.CityCompass.models.DateSlot;
+import com.example.CityCompass.models.Status;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -22,6 +23,9 @@ public class ServicesProvidedDto {
     private String experience;
 
     private String charge;
+
+
+    private Status status;
 
     private List<DateSlotDto> dateSlotList;
 }

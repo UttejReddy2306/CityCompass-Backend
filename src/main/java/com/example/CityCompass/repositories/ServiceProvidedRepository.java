@@ -29,4 +29,5 @@ public interface ServiceProvidedRepository extends JpaRepository<ServicesProvide
     @Query("update ServicesProvided s set s.permission = ?1 where s.id = ?2")
     void updatePermission(Permission permission, Integer id);
 
+    List<ServicesProvided> findByUserId(Integer id);
 }

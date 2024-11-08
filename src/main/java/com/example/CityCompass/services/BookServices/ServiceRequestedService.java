@@ -1,5 +1,6 @@
 package com.example.CityCompass.services.BookServices;
 
+import com.example.CityCompass.RequestDtos.DeleteTimeSlotDto;
 import com.example.CityCompass.RequestDtos.ServiceRequestDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.repositories.ServiceRequestedRepository;
@@ -54,7 +55,7 @@ public class ServiceRequestedService {
     public List<ServicesRequested> getAllProviderRequests(String username) {
         Users users = this.userService.getUser(username);
 
-        return serviceRequestedRepository.findByProvidedUserAndUserRequestStatus(users,UserRequestStatus.REQUESTED);
+        return serviceRequestedRepository.findByProvidedUserAndUserRequestStatusAndPermission(users,UserRequestStatus.REQUESTED,Permission.Pending);
     }
 
     public List<ServicesRequested> getAllServicesRequestedByUser(String username) {
@@ -98,16 +99,17 @@ public class ServiceRequestedService {
     }
 
 
-    public String deleteSlot(Integer serviceId, Integer timeSlotId, String username) {
+    public String deleteSlot(DeleteTimeSlotDto deleteTimeSlotDto, String username) {
         Users users = this.userService.getUser(username);
-        ServicesProvided servicesProvided = this.serviceProvidedService.findById(serviceId);
+        ServicesProvided servicesProvided = this.serviceProvidedService.findById(deleteTimeSlotDto.getServiceId());
         if(servicesProvided != null){
             if(servicesProvided.getUser() != users) return "UnAuthorized";
-            TimeSlot timeSlot = this.timeSlotService.findByTimeSlotId(timeSlotId);
-            if(timeSlot == null) return "InValid TimeSlot ";
-
-            this.serviceRequestedRepository.clearAllServiceRequestedByTimeSlotId(timeSlotId,Permission.Rejected);
-            this.timeSlotService.deleteByTimeSlotId(timeSlot);
+            for(Integer timeSlotId : deleteTimeSlotDto.getLocalTimeSlotIdList()){
+                TimeSlot timeSlot = this.timeSlotService.findByTimeSlotId(timeSlotId);
+                if(timeSlot == null) return "InValid TimeSlot ";
+                this.serviceRequestedRepository.clearAllServiceRequestedByTimeSlotId(timeSlotId,Permission.Rejected);
+                this.timeSlotService.deleteByTimeSlotId(timeSlot);
+            }
             return "Succesfull";
         }
         return "Invalid Service ";

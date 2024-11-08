@@ -10,9 +10,5 @@ import lombok.*;
 @Builder
 public class CommentRequestDto {
     private String content;
-    public Comment to(){
-        return Comment.builder()
-                .content(this.content)
-                .build();
-    }
+
 }

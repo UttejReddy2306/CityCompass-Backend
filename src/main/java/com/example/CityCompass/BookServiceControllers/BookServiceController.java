@@ -1,9 +1,12 @@
 package com.example.CityCompass.BookServiceControllers;
 
+import com.example.CityCompass.RequestDtos.DeleteTimeSlotDto;
+import com.example.CityCompass.RequestDtos.ServiceEditDto;
 import com.example.CityCompass.RequestDtos.ServiceRequestDto;
 import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.ResponseDtos.DateSlotDto;
 import com.example.CityCompass.ResponseDtos.ServicesProvidedDto;
+import com.example.CityCompass.ResponseDtos.ServicesRequestedDto;
 import com.example.CityCompass.ResponseDtos.TimeSlotsDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.services.BookServices.ServiceProvidedService;
@@ -19,6 +22,9 @@ import com.example.CityCompass.models.ServicesRequested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -53,8 +59,11 @@ public class BookServiceController {
                                 .localTime(z.getStartTime())
                                 .timeSlotId(z.getId())
                                 .isAvailable(z.getIsAvailable())
-                                .build()).collect(Collectors.toList()))
-                        .build()).collect(Collectors.toList()))
+                                .build())
+                                .collect(Collectors.toList()))
+                        .build())
+                        .filter(z -> z.getLocalDate().isAfter(LocalDate.now()))
+                        .collect(Collectors.toList()))
                 .build()).collect(Collectors.toList());
     }
 
@@ -97,13 +106,39 @@ public class BookServiceController {
     }
 
     @GetMapping("/provider/getAllProviderRequests")
-    public List<ServicesRequested> getAllProviderRequests(HttpServletRequest request){
-        return this.serviceRequestedService.getAllProviderRequests(request.getAttribute("username").toString());
+    public List<ServicesRequestedDto> getAllProviderRequests(HttpServletRequest request){
+        return this.serviceRequestedService.getAllProviderRequests(request.getAttribute("username").toString())
+                .stream().map(x -> ServicesRequestedDto.builder()
+                        .serviceRequestedId(x.getId())
+                        .requestedUserProblem(x.getRequestedUserProblem())
+                        .charge(x.getServicesProvided().getCharge())
+                        .service(x.getServicesProvided().getService())
+                        .permission(x.getPermission())
+                        .providerUserName(x.getProvidedUser().getName())
+                        .userRequestStatus(x.getUserRequestStatus())
+                        .requestedUserName(x.getRequestedUser().getName())
+                        .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
+                        .build())
+                .filter(x -> x.getLocalTime() != null)
+                .collect(Collectors.toList());
     }
 
-    @GetMapping("/all/getAllRequests")
-    public List<ServicesRequested> getAllServicesRequestedByUser(HttpServletRequest request){
-        return this.serviceRequestedService.getAllServicesRequestedByUser(request.getAttribute("username").toString());
+    @GetMapping("/all/getAllServiceRequestsByUser")
+    public List<ServicesRequestedDto> getAllServicesRequestedByUser(HttpServletRequest request){
+        return this.serviceRequestedService.getAllServicesRequestedByUser(request.getAttribute("username").toString())
+                .stream().map(x -> ServicesRequestedDto.builder()
+                        .serviceRequestedId(x.getId())
+                        .requestedUserProblem(x.getRequestedUserProblem())
+                        .charge(x.getServicesProvided().getCharge())
+                        .service(x.getServicesProvided().getService())
+                        .permission(x.getPermission())
+                        .providerUserName(x.getProvidedUser().getName())
+                        .userRequestStatus(x.getUserRequestStatus())
+                        .requestedUserName(x.getRequestedUser().getName())
+                        .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
+                        .build())
+                .filter(x -> x.getLocalTime() != null)
+                .collect(Collectors.toList());
     }
 
     @PatchMapping("/provider/updateResponse/{srId}/{decision}")
@@ -117,9 +152,9 @@ public class BookServiceController {
         return this.userService.createSlot(serviceId,SlotDtoList,request.getAttribute("username").toString());
     }
 
-    @DeleteMapping("/provider/deleteSlot/{serviceId}/{timeSlotId}")
-    public String deleteSlot(@PathVariable("serviceId") Integer serviceId,@PathVariable("timeSlotId") Integer timeSlotId ,HttpServletRequest request){
-        return this.serviceRequestedService.deleteSlot(serviceId,timeSlotId, request.getAttribute("username").toString());
+    @DeleteMapping("/provider/deleteSlot")
+    public String deleteSlot(@RequestBody DeleteTimeSlotDto deleteTimeSlotDto, HttpServletRequest request){
+        return this.serviceRequestedService.deleteSlot(deleteTimeSlotDto, request.getAttribute("username").toString());
     }
 
     @GetMapping("/public/seeAvailability/{serviceId}")
@@ -130,6 +165,36 @@ public class BookServiceController {
     @GetMapping("public/dateSlots/{serviceId}")
     public List<DateSlot> allDateTimeSlots(@PathVariable("serviceId") Integer serviceId){
         return this.serviceProvidedService.allDateTimeSlots(serviceId);
+    }
+
+    @PatchMapping("/provider/updateServiceProvidedDetails")
+    public String updateServiceProvidedDetails(@RequestBody ServiceEditDto serviceEditDto, HttpServletRequest request) {
+        return this.userService.updateServiceProvidedDetails(serviceEditDto,request.getAttribute("username").toString());
+    }
+
+    @GetMapping("/provider/getAllProviderServices")
+    public List<ServicesProvidedDto> getAllProviderServices(HttpServletRequest request){
+        return this.userService.getAllProviderServices(request.getAttribute("username").toString()).stream().map(x -> ServicesProvidedDto.builder()
+                .serviceId(x.getId())
+                .name(x.getUser().getName())
+                .serviceName(x.getService().name())
+                .experience(x.getExperience())
+                .charge(x.getCharge())
+                .status(x.getStatus())
+                .dateSlotList(x.getDateSlotList().stream().map(y -> DateSlotDto.builder()
+                        .dateSlotId(y.getId())
+                        .localDate(y.getLocalDate())
+                        .timeSlotsDtoList(y.getTimeSlotList().stream().map(z -> TimeSlotsDto.builder()
+                                .localTime(z.getStartTime())
+                                .timeSlotId(z.getId())
+                                .isAvailable(z.getIsAvailable())
+                                .build())
+                                .collect(Collectors.toList()))
+                        .build())
+                        .filter( y -> !y.getTimeSlotsDtoList().isEmpty())
+                        .collect(Collectors.toList()))
+                .build())
+                .collect(Collectors.toList());
     }
 
 }

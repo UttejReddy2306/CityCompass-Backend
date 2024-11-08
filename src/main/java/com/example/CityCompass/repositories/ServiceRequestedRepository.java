@@ -21,7 +21,6 @@ public interface ServiceRequestedRepository extends JpaRepository<ServicesReques
 
     List<ServicesRequested> findByRequestedUser(Users users);
 
-    List<ServicesRequested> findByProvidedUserAndUserRequestStatus(Users users, UserRequestStatus userRequestStatus);
 
 
     ServicesRequested findByTimeSlotAndUserRequestStatusAndPermission(TimeSlot timeSlot, UserRequestStatus userRequestStatus, Permission permission);
@@ -31,4 +30,5 @@ public interface ServiceRequestedRepository extends JpaRepository<ServicesReques
     @Query("update ServicesRequested s set s.timeSlot = null , s.permission = ?2 where s.timeSlot.id = ?1")
     void clearAllServiceRequestedByTimeSlotId(Integer timeSlotId, Permission permission);
 
+    List<ServicesRequested> findByProvidedUserAndUserRequestStatusAndPermission(Users users, UserRequestStatus userRequestStatus, Permission permission);
 }

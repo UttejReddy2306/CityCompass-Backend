@@ -1,6 +1,7 @@
 package com.example.CityCompass.UserController;
 
 
+import com.example.CityCompass.FindJobsDTOs.CompanyRegisterRequest;
 import com.example.CityCompass.RequestDtos.SpCreateRequest;
 import com.example.CityCompass.RequestDtos.UserCreateRequest;
 import com.example.CityCompass.RequestDtos.UserSignInRequest;
@@ -14,12 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
-
-
-
 @RestController
-
-
 @RequestMapping("/user")
 public class UserController {
 
@@ -52,9 +48,10 @@ public class UserController {
         return this.userService.createAdmin(userCreateRequest);
     }
 
-//    @PatchMapping("/provider/updateServiveDetails")
-//    public String updateServiceDetails(@RequestBody ServiceEditDto serviceEditDto, HttpServletRequest httpServletRequest){
-//        return this.userService.updateServiceDetails(serviceEditDto,httpServletRequest.getAttribute("username").toString());
-//    }
+    @PostMapping("/public/register/jobProvider")
+    public String createJobProvider(@Valid @RequestBody CompanyRegisterRequest companyRegisterRequest){
+        return this.userService.createJPUser(companyRegisterRequest);
+    }
+
 
 }

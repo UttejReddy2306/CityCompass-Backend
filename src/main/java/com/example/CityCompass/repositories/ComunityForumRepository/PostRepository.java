@@ -7,6 +7,7 @@ import com.example.CityCompass.dtos.ComunityForumDTOs.PostResponseDto;
 
 import com.example.CityCompass.models.ComunityForum.Post;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,30 +16,21 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByUserId(Long userId);
 
-//@Query("""
-//    SELECT new com.example.CityCompass.dtos.ComunityForumDTOs.PostResponseDto(
-//        p.id, p.title, p.content, p.user.username, p.createdAt,
-//        size(p.likes), size(p.comments)
-//    )
-//    FROM Post p
-//    GROUP BY p.id
-//    ORDER BY p.createdAt DESC
-//""")
-//    =--------------------------------------------------------------------
-@Query("""
-    SELECT new com.example.CityCompass.dtos.ComunityForumDTOs.PostResponseDto(
-        p.id, p.title, p.content, p.user.username, p.createdAt, 
-        size(p.likes), size(p.comments), p.imagePath, p.videoPath
-    )
-    FROM Post p
-    LEFT JOIN p.comments c
-    GROUP BY p.id, p.title, p.content, p.user.username, p.createdAt, 
-             p.imagePath, p.videoPath
-    ORDER BY p.createdAt DESC
-""")
-    List<PostResponseDto> findAllPostsWithCounts();
+//    List<Post> findAllByOrderByCreatedAtDesc();
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.replies",
+            "comments.replies.replies", // Add more levels if needed
+            "comments.likes",
+            "comments.user",
+            "likes",
+            "user"
+    })
+    List<Post> findAllByOrderByCreatedAtDesc();
 
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.comments WHERE p.id = :postId")
+    Post findByIdWithComments(Long postId);
 
 
 

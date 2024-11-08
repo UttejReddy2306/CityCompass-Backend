@@ -1,9 +1,4 @@
-package com.example.CityCompass.models.ComunityForum;
 
-import com.example.CityCompass.models.Users;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import lombok.*;
 
 //@Entity
 //@Data
@@ -29,6 +24,36 @@ import lombok.*;
 //}
 //workin code
 //------------------------------------------------------------------------
+//@Entity
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Builder
+//
+//public class PostLike {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "post_id", nullable = false)
+//    private Post post;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private Users user;
+//}
+
+
+package com.example.CityCompass.models.ComunityForum;
+
+import com.example.CityCompass.models.Users;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import lombok.*;
+
+
 @Entity
 @Data
 @NoArgsConstructor

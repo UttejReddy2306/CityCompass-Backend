@@ -16,6 +16,7 @@ public class ServiceRequestDto {
 
     private String userReason;
 
+
     @NotNull
     private Integer localTimeId;
 

@@ -2,15 +2,15 @@ package com.example.CityCompass.services;
 
 
 
-import com.example.CityCompass.RequestDtos.SlotDto;
-import com.example.CityCompass.RequestDtos.SpCreateRequest;
-import com.example.CityCompass.RequestDtos.UserCreateRequest;
-import com.example.CityCompass.RequestDtos.UserSignInRequest;
+import com.example.CityCompass.FindJobsDTOs.CompanyRegisterRequest;
+import com.example.CityCompass.RequestDtos.*;
+import com.example.CityCompass.models.ServicesProvided;
 import com.example.CityCompass.models.UserType;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.UserRepository;
 import com.example.CityCompass.services.BookServices.ServiceProvidedService;
 
+import com.example.CityCompass.services.FindJobs.CompanyService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,10 +19,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 @Service
 public class UserService {
+
+    @Autowired
+    CompanyService companyService;
 
     @Autowired
     private UserRepository userRepository;
@@ -98,5 +103,34 @@ public class UserService {
     public List<Users> getAll() {
      return userRepository.findAll();
     }
+
+    public String  updateServiceProvidedDetails(ServiceEditDto serviceEditDto, String username)  {
+        Users users = this.userRepository.findByUsername(username);
+        return this.serviceProvidedService.updateDetails(serviceEditDto,users);
+
+    }
+
+    public List<ServicesProvided> getAllProviderServices(String username) {
+        Users users = this.userRepository.findByUsername(username);
+        return this.serviceProvidedService.getAllProviderServices(users);
+    }
+
+    public Users getUserId(int userId) {
+        return this.userRepository.findById(userId).orElse(null);
+    }
+
+    public Users getUserType(UserType userType) {
+        return this.userRepository.findByUserType(userType);
+    }
+
+    public String createJPUser(CompanyRegisterRequest companyRegisterRequest) {
+        Users users = companyRegisterRequest.companyAsUser(companyRegisterRequest);
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        users.setUserType(UserType.JOB_PROVIDER);
+        users = this.userRepository.save(users);
+        companyService.createCompany(users,companyRegisterRequest);
+        return "SUCCESSFUL";
+    }
+
 
 }

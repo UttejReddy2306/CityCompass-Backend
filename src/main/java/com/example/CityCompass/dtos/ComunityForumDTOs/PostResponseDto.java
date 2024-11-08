@@ -60,25 +60,11 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private int likeCount;
     private int commentCount;
-    private String imagePath;
-    private String videoPath;
-    private List<Comment> comments;
+    private String preSignedImageUrl;
+    private String preSignedVideoUrl;
+    private List<CommentResponseDto> comments;
 
-    public PostResponseDto(Long postId, String title, String content, String username,
-                           LocalDateTime createdAt, int likeCount, int commentCount,
-                           String imagePath, String videoPath) {
-        this.postId = postId;
-        this.title = title;
-        this.content = content;
-        this.username = username;
-        this.createdAt = createdAt;
-        this.likeCount = likeCount;
-        this.commentCount = commentCount;
-        this.imagePath = imagePath;
-        this.videoPath = videoPath;
-    }
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
+
+
 }
 

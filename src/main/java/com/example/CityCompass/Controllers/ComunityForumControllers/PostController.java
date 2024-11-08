@@ -1,5 +1,6 @@
 package com.example.CityCompass.Controllers.ComunityForumControllers;
 
+import com.example.CityCompass.dtos.ComunityForumDTOs.CommentResponseDto;
 import com.example.CityCompass.dtos.ComunityForumDTOs.PostRequestDto;
 import com.example.CityCompass.dtos.ComunityForumDTOs.PostResponseDto;
 
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/posts")
@@ -19,16 +22,6 @@ public class PostController {
 
     @Autowired
     private PostService postService;
-
-
-//    @PostMapping("/postNow")
-//    public PostResponseDto createPost(
-//            @RequestBody PostRequestDto postRequestDto,
-//            HttpServletRequest request) {
-//        String username = request.getAttribute("username").toString();  // Extract username from request
-//        return postService.createPost(postRequestDto, username);
-//    }
-
     @PostMapping(value = "/create", consumes = "multipart/form-data")
     public PostResponseDto createPost(
             @ModelAttribute PostRequestDto postRequestDto,
@@ -40,22 +33,15 @@ public class PostController {
 
 
     @GetMapping("/user/{userId}")
-    public List<Post> getPostsByUser(@PathVariable Long userId) {
+    public List<PostResponseDto> getPostsByUser(@PathVariable Long userId) {
         return postService.getPostsByUser(userId);
+
     }
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/latest")
-    public List<PostResponseDto> getLatestPosts() {
-    return postService.getLatestPosts();
-}
-
-
-
-
-
-
-
-
+    public List<PostResponseDto> getLatestPosts() throws IOException {
+        return postService.getLatestPosts();
+    }
 
     @DeleteMapping("/{postId}")
     public String deletePost(@PathVariable Long postId) {

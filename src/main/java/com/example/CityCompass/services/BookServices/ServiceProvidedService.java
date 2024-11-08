@@ -7,14 +7,16 @@ import com.example.CityCompass.models.*;
 import com.example.CityCompass.repositories.ServiceProvidedRepository;
 import com.example.CityCompass.services.EmailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.DataInput;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Iterator;
 import java.util.List;
-
 @Service
 public class ServiceProvidedService {
 
@@ -108,37 +110,21 @@ public class ServiceProvidedService {
     public List<DateSlot> allDateTimeSlots(Integer serviceId) {
         return this.dateSlotService.findByServicesProvidedId(serviceId);
     }
-//
-//    public GetStudentDetailsResponse update(UpdateStudentRequest updateStudentRequest,int studentId) {
-//        Student student = updateStudentRequest.to();
-//        GetStudentDetailsResponse studentDetailsResponse = this.getStudentDetails(studentId);
-//        Student savedStudent = studentDetailsResponse.getStudent();
-//        Student target = this.merge(student, savedStudent);
-//        this.studentRepository.save(target);
-//        studentDetailsResponse.setStudent(target);
-//        return studentDetailsResponse;
-//    }
-//    public Student merge(Student student , Student savedStudent){
-//        JSONObject current = mapper.convertValue(student,JSONObject.class);
-//        JSONObject saved = mapper.convertValue(savedStudent,JSONObject.class);
-//        Iterator itr = saved.keySet().iterator();
-//        while(itr.hasNext()){
-//            String key = (String)itr.next();
-//            if(current.get(key) != null){
-//                saved.put(key,current.get(key));
-//            }
-//        }
-//        return mapper.convertValue(saved,Student.class);
-//    }
 
-//    public String updateServiceDetails(ServiceEditDto serviceEditDto, Users users) {
-//        ServicesProvided servicesProvided = serviceEditDto.to();
-//        ServicesProvided savedServicesProvided = this.serviceProvidedRepository.findById(servicesProvided.getId()).orElse(null);
-//        if(users != savedServicesProvided.getUser()) return "UNAuthorized";
-//        ServicesProvided target = this.merge(servicesProvided,savedServicesProvided);
-//
-//    }
-//    public ServicesProvided merge(ServicesProvided newService,  ServicesProvided savedService ){
-//        JSONObject
-//    }
+    public String updateDetails(ServiceEditDto serviceEditDto, Users users)  {
+
+        ServicesProvided savedServicesProvided = this.serviceProvidedRepository.findById(serviceEditDto.getServiceId()).orElse(null);
+        if(users != savedServicesProvided.getUser()) return "UnAuthorized";
+        if(!serviceEditDto.getExperience().isEmpty()) savedServicesProvided.setExperience(serviceEditDto.getExperience());
+        if(serviceEditDto.getStatus() != null) savedServicesProvided.setStatus(serviceEditDto.getStatus());
+        if(!serviceEditDto.getCharge().isEmpty()) savedServicesProvided.setCharge(serviceEditDto.getCharge());
+        this.serviceProvidedRepository.save(savedServicesProvided);
+        return "Successfully Updated";
+
+    }
+
+
+    public List<ServicesProvided> getAllProviderServices(Users users) {
+        return this.serviceProvidedRepository.findByUserId(users.getId());
+    }
 }
