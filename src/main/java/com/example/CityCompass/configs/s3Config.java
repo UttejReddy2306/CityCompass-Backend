@@ -18,6 +18,13 @@ public class s3Config {
     @Value("${cloud.aws.credentials.secret-key}")
     private String secretKey;
 
+
+//    @Value("${ACCESS_KEY:NOT_SET}")
+//    private String accessKey;
+//
+//    @Value("${SECRET_KEY:NOT_SET}")
+//    private String secretKey;
+
     @Value("${cloud.aws.region.static}")
     private String region;
 
