@@ -2,15 +2,15 @@ package com.example.CityCompass.models;
 
 public enum Services {
 
-    plumber,
+    PLUMBER,
 
-    electrician,
+    ELECTRICIAN,
 
-    mechanic,
+    MECHANIC,
 
-    Cleaning,
+    CLEANING,
 
-    PestControl,
+    PESTCONTROL,
 
     SPAS;
 

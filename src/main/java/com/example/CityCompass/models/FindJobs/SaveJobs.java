@@ -3,6 +3,10 @@ package com.example.CityCompass.models.FindJobs;
 import com.example.CityCompass.models.Users;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -25,4 +29,11 @@ public class SaveJobs {
 
     @Column(nullable = false)
     private boolean active;
+
+    @CreationTimestamp
+    private Date createdAt;
+
+    @UpdateTimestamp
+    private Date updatedAt;
+
 }

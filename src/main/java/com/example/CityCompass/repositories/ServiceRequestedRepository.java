@@ -1,5 +1,6 @@
 package com.example.CityCompass.repositories;
 
+import com.example.CityCompass.RequestDtos.ServiceRequestDto;
 import com.example.CityCompass.models.*;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,6 @@ public interface ServiceRequestedRepository extends JpaRepository<ServicesReques
     void clearAllServiceRequestedByTimeSlotId(Integer timeSlotId, Permission permission);
 
     List<ServicesRequested> findByProvidedUserAndUserRequestStatusAndPermission(Users users, UserRequestStatus userRequestStatus, Permission permission);
+
+    List<ServicesRequested> findByPermissionOrderByUpdatedOnDesc(Permission permission);
 }

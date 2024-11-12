@@ -50,8 +50,9 @@ public class ServicesProvided {
     private Date createdOn;
 
 
-    @OneToMany(mappedBy = "servicesProvided")
+    @OneToMany(mappedBy = "servicesProvided",fetch = FetchType.LAZY)
     @JsonIgnoreProperties("servicesProvided")
+    @OrderBy("localDate ASC")
     private List<DateSlot> dateSlotList;
 
 

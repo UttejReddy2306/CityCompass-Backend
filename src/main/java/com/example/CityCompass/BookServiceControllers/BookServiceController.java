@@ -63,6 +63,7 @@ public class BookServiceController {
                                 .collect(Collectors.toList()))
                         .build())
                         .filter(z -> z.getLocalDate().isAfter(LocalDate.now()))
+                        .filter(z -> !z.getTimeSlotsDtoList().isEmpty())
                         .collect(Collectors.toList()))
                 .build()).collect(Collectors.toList());
     }
@@ -82,8 +83,12 @@ public class BookServiceController {
                                 .localTime(z.getStartTime())
                                 .timeSlotId(z.getId())
                                 .isAvailable(z.getIsAvailable())
-                                .build()).collect(Collectors.toList()))
-                        .build()).collect(Collectors.toList()))
+                                .build())
+                                .collect(Collectors.toList()))
+                        .build())
+                        .filter(z -> z.getLocalDate().isAfter(LocalDate.now()))
+                        .filter(z -> !z.getTimeSlotsDtoList().isEmpty())
+                        .collect(Collectors.toList()))
                 .build()).collect(Collectors.toList());
 
     }
@@ -95,9 +100,6 @@ public class BookServiceController {
 
 
     }
-
-
-
 
     @PatchMapping("/all/cancelService/{serviceId}")
     public String cancelService(@PathVariable("serviceId") Integer serviceId, HttpServletRequest request)
@@ -118,9 +120,13 @@ public class BookServiceController {
                         .userRequestStatus(x.getUserRequestStatus())
                         .address(x.getAddress())
                         .requestedUserName(x.getRequestedUser().getName())
+                        .localDate(x.getTimeSlot()!= null ? x.getTimeSlot().getDateSlot().getLocalDate(): null)
                         .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
                         .build())
                 .filter(x -> x.getLocalTime() != null)
+                .filter(x -> (x.getLocalDate().isAfter(LocalDate.now()))
+                        || (x.getLocalDate().isEqual(LocalDate.now())
+                        && x.getLocalTime().isAfter(LocalTime.now())))
                 .collect(Collectors.toList());
     }
 
@@ -196,6 +202,25 @@ public class BookServiceController {
                         .filter( y -> !y.getTimeSlotsDtoList().isEmpty())
                         .collect(Collectors.toList()))
                 .build())
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/provider/getAllAcceptedServiceRequests")
+    public List<ServicesRequestedDto> getAllAcceptedServiceRequests(HttpServletRequest request){
+        return this.serviceRequestedService.getAllAcceptedServiceRequests(request.getAttribute("username").toString())
+                .stream().map(x -> ServicesRequestedDto.builder()
+                        .serviceRequestedId(x.getId())
+                        .requestedUserProblem(x.getRequestedUserProblem())
+                        .charge(x.getServicesProvided().getCharge())
+                        .service(x.getServicesProvided().getService())
+                        .permission(x.getPermission())
+                        .providerUserName(x.getProvidedUser().getName())
+                        .userRequestStatus(x.getUserRequestStatus())
+                        .address(x.getAddress())
+                        .requestedUserName(x.getRequestedUser().getName())
+                        .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
+                        .build())
+                .filter(x -> x.getLocalTime() != null)
                 .collect(Collectors.toList());
     }
 

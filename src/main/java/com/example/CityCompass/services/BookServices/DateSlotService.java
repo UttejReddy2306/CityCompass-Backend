@@ -3,6 +3,7 @@ package com.example.CityCompass.services.BookServices;
 import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.models.DateSlot;
 import com.example.CityCompass.models.ServicesProvided;
+import com.example.CityCompass.models.TimeSlot;
 import com.example.CityCompass.repositories.DateSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -45,7 +45,6 @@ public class ServicesRequested {
 
     @JoinColumn
     @ManyToOne
-    @JsonIgnoreProperties("dateSlot")
     private TimeSlot timeSlot;
 
     private String requestedUserProblem;

@@ -7,6 +7,7 @@ import com.example.CityCompass.models.UserRequestStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
@@ -27,6 +28,10 @@ public class ServicesRequestedDto {
     private String requestedUserProblem;
 
     private String charge;
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate localDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime localTime;

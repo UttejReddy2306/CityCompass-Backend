@@ -29,6 +29,9 @@ public class ServiceRequestedService {
     @Autowired
     TimeSlotService timeSlotService;
 
+    @Autowired
+    DateSlotService dateSlotService;
+
     public String createRequest(ServiceRequestDto serviceRequestDto, String username) {
         Users requestedUser = userService.getUser(username);
         ServicesProvided servicesProvided = serviceProvidedService.getProvider(serviceRequestDto.getServiceId());
@@ -111,8 +114,13 @@ public class ServiceRequestedService {
                 this.serviceRequestedRepository.clearAllServiceRequestedByTimeSlotId(timeSlotId,Permission.Rejected);
                 this.timeSlotService.deleteByTimeSlotId(timeSlot);
             }
-            return "Succesfull";
+            return "Succesfully";
         }
         return "Invalid Service ";
+    }
+
+    public List<ServicesRequested> getAllAcceptedServiceRequests(String username) {
+        Users users = userService.getUser(username);
+        return serviceRequestedRepository.findByPermissionOrderByUpdatedOnDesc(Permission.Accepted);
     }
 }

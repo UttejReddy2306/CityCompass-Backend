@@ -5,6 +5,7 @@ import com.example.CityCompass.models.Users;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -52,5 +53,11 @@ public class JobPosting {
 
     @CreationTimestamp
     private Date postedOn;
+
+    @CreationTimestamp
+    private Date createdAt;
+
+    @UpdateTimestamp
+    private Date updatedAt;
 
 }

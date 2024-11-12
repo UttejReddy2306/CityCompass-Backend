@@ -83,4 +83,8 @@ public class CompanyService {
         companyRepository.save(company);
         return "Updated Successfully";
     }
+
+    public Company getCompanyDetails(Users users) {
+        return companyRepository.findByUser(users);
+    }
 }

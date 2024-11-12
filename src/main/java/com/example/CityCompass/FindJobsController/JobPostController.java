@@ -121,4 +121,11 @@ public class JobPostController {
         Users users = userService.getUser(request.getAttribute("username").toString());
         return ResponseEntity.ok(companyService.UpdateCompanyDetails(companyRegisterRequest,users));
     }
+
+
+    @GetMapping("/company/allDetails")
+    public ResponseEntity<Company> getCompanyDetails(HttpServletRequest request) {
+        Users users = userService.getUser(request.getAttribute("username").toString());
+        return ResponseEntity.ok(companyService.getCompanyDetails(users));
+    }
 }

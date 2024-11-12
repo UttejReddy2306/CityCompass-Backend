@@ -13,15 +13,19 @@ import com.example.CityCompass.services.BookServices.ServiceProvidedService;
 import com.example.CityCompass.services.FindJobs.CompanyService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Collection;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -40,6 +44,9 @@ public class UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    S3Service s3Service;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -130,6 +137,38 @@ public class UserService {
         users = this.userRepository.save(users);
         companyService.createCompany(users,companyRegisterRequest);
         return "SUCCESSFUL";
+    }
+
+
+    public String createProfilePicture(MultipartFile file, String username) {
+        Users users = userRepository.findByUsername(username);
+        String filePath = s3Service.createFile(file);
+        users.setProfilePicture(filePath);
+        return s3Service.generatePresignedUrl(filePath,30);
+    }
+
+    public String updateProfile(String email, String number, String name, String username) {
+        Users users = userRepository.findByUsername(username);
+        if(userRepository.existsByEmail(email) ) return "Email already Exists";
+        if( userRepository.existsByNumber(number)) return "Number Already Exists";
+        if( name != null && !name.isEmpty() ) users.setName(name);
+        if(email != null && !email.isEmpty()) users.setEmail(email);
+        if(number != null && !number.isEmpty()) users.setNumber(number);
+        userRepository.save(users);
+        return "Updated Successfully";
+    }
+
+    public String updatePassword(String oldPassword, String newPassword, String username) {
+        Users users = userRepository.findByUsername(username);
+        String oldOne = users.getPassword();
+        if(passwordEncoder.matches(oldPassword,oldOne)){
+            String newOne = passwordEncoder.encode(newPassword);
+            users.setPassword(newOne);
+            userRepository.save(users);
+            return "Password Changed Successfully";
+        }
+        return "Old Password is Wrong";
+
     }
 
 
