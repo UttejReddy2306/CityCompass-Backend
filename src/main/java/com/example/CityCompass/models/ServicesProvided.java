@@ -41,6 +41,7 @@ public class ServicesProvided {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String license;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

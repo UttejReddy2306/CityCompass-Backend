@@ -10,6 +10,7 @@ import com.example.CityCompass.services.FindJobs.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,6 +40,11 @@ public class AdminService {
     }
 
 
+    public List<ServicesProvided> getAllAcceptedSp() {
+        return serviceProvidedService.getAllAcceptedSp();
+    }
 
-
+    public List<Company> getAllAcceptedPermission() {
+        return companyService.getAllAcceptedCompanies();
+    }
 }

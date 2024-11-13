@@ -3,24 +3,24 @@ package com.example.CityCompass.services;
 import com.example.CityCompass.models.UserType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
     Map<String,Object> claims = new HashMap<String, Object>();
+
 
     private String secretKey = "";
 
@@ -29,6 +29,7 @@ public class JwtService {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGenerator.generateKey();
             secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+            System.out.println("SecretKey = " + secretKey);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +43,7 @@ public class JwtService {
                 .subject(username)
                 .add("UserType", userType.name())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + (60 * 60 * 300)))
+                .expiration(new Date(System.currentTimeMillis() + (30 * 60 * 1000)))
                 .and()
                 .signWith(getKey())
                 .compact();
@@ -85,4 +86,12 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public String generateResetToken() {
+        return Jwts.builder()
+                .id(UUID.randomUUID().toString()) // Unique ID
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)) // 3 minutes
+                .signWith(getKey())
+                .compact();
+    }
 }

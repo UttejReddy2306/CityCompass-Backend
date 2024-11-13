@@ -6,10 +6,12 @@ import com.example.CityCompass.RequestDtos.SlotDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.repositories.ServiceProvidedRepository;
 import com.example.CityCompass.services.EmailService;
+import com.example.CityCompass.services.S3Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -35,12 +37,16 @@ public class ServiceProvidedService {
     @Autowired
     ObjectMapper mapper;
 
+    @Autowired
+    S3Service s3Service;
+
     public void createSp(Users users, SpCreateRequest spCreateRequest) {
+        MultipartFile file = spCreateRequest.getLicense();
+        String license = s3Service.createFile(file);
         ServicesProvided servicesProvided = spCreateRequest.toServiceProvided(spCreateRequest);
         servicesProvided.setUser(users);
+        servicesProvided.setLicense(license);
         this.serviceProvidedRepository.save(servicesProvided);
-
-
     }
 
     public List<ServicesProvided> getAllPendingSp() {
@@ -126,5 +132,9 @@ public class ServiceProvidedService {
 
     public List<ServicesProvided> getAllProviderServices(Users users) {
         return this.serviceProvidedRepository.findByUserId(users.getId());
+    }
+
+    public List<ServicesProvided> getAllAcceptedSp() {
+        return serviceProvidedRepository.findByPermission(Permission.Accepted);
     }
 }

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,6 +48,9 @@ public class UserService {
 
     @Autowired
     S3Service s3Service;
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -171,5 +175,43 @@ public class UserService {
 
     }
 
+
+    public String forgotPassword(String email) {
+        Optional<Users> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return"User not found.";
+        }
+        // Generate reset token
+        String resetToken = jwtService.generateResetToken();
+        Users user = userOptional.get();
+        user.setResetToken(resetToken);
+        user.setTokenExpirationDate(new Date(System.currentTimeMillis() + 3 * 60 * 1000)); // 1-hour expiry
+        userRepository.save(user);
+
+        // Send email (implement the sendEmail function)
+        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+        emailService.sendForgotPasswordResponse(user.getEmail(), resetLink);
+        return resetToken;
+    }
+
+    public boolean validateTokenAndResetPassword(String token, String newPassword) {
+        Optional<Users> userOptional = userRepository.findByResetToken(token);
+        if (userOptional.isPresent()) {
+            Users user = userOptional.get();
+            // Check if the token is expired
+            if (user.getTokenExpirationDate().after(new Date())) {
+                // Reset password
+                user.setPassword(passwordEncoder.encode(newPassword));
+                user.setResetToken(null); // Clear reset token
+                user.setTokenExpirationDate(null); // Clear expiry date
+                userRepository.save(user);
+                return true;
+            } else {
+                throw new IllegalArgumentException("Token expired");
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid token");
+        }
+    }
 
 }

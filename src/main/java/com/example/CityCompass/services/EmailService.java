@@ -29,5 +29,19 @@ public class EmailService {
     }
 
 
+    public void sendForgotPasswordResponse(String userEmail, String resetLink) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(userEmail);
+        message.setSubject("Password Reset Request");
 
+        String emailContent = "You're receiving this e-mail because you or someone else has requested a password reset "
+                + "for your user account at City Compass.\n\n"
+                + "Click the link below to reset your password:\n"
+                + resetLink + "\n\n"
+                + "If you did not request a password reset, you can safely ignore this email.";
+
+        message.setText(emailContent);
+        javaMailSender.send(message);
+
+    }
 }

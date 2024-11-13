@@ -5,7 +5,9 @@ import com.example.CityCompass.models.Permission;
 import com.example.CityCompass.models.Status;
 import com.example.CityCompass.models.Users;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -33,6 +35,9 @@ public class CompanyRegisterRequest {
 
     @NotBlank
     private String companyId;
+
+    @NotNull
+    MultipartFile  license;
 
     @NotBlank
     private String location;

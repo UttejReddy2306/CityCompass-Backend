@@ -45,6 +45,9 @@ public class Company {
     private String location;
 
     @Column(nullable = false)
+    private String license;
+
+    @Column(nullable = false)
     private String companyName;
 
     @Column(nullable = false)

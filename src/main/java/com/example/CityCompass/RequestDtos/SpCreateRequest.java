@@ -2,7 +2,9 @@ package com.example.CityCompass.RequestDtos;
 
 import com.example.CityCompass.models.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -30,6 +32,9 @@ public class SpCreateRequest {
 
     @NotBlank
     private String service;
+
+
+    private MultipartFile license;
 
     @NotBlank
     private String experience;

@@ -9,9 +9,11 @@ import com.example.CityCompass.models.Status;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.FindJobs.CompanyRepository;
 import com.example.CityCompass.repositories.FindJobs.JobPostRepository;
+import com.example.CityCompass.services.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,8 +26,14 @@ public class CompanyService {
     @Autowired
     JobPostRepository jobPostRepository;
 
+    @Autowired
+    S3Service s3Service;
+
     public void createCompany(Users user, CompanyRegisterRequest companyRegisterRequest) {
+        MultipartFile file = companyRegisterRequest.getLicense();
+        String license = s3Service.createFile(file);
         Company company = companyRegisterRequest.toCompany(companyRegisterRequest);
+        company.setLicense(license);
         company.setUser(user);
         companyRepository.save(company);
     }
@@ -86,5 +94,9 @@ public class CompanyService {
 
     public Company getCompanyDetails(Users users) {
         return companyRepository.findByUser(users);
+    }
+
+    public List<Company> getAllAcceptedCompanies() {
+        return companyRepository.findByPermission(Permission.Accepted);
     }
 }

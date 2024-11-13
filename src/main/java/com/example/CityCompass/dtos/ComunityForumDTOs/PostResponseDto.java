@@ -1,6 +1,7 @@
 package com.example.CityCompass.dtos.ComunityForumDTOs;
 
 import com.example.CityCompass.models.ComunityForum.Comment;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -57,6 +58,7 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String username;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private int likeCount;
     private int commentCount;

@@ -48,6 +48,11 @@ public class Users implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
+
+    private String resetToken;
+
+    private Date tokenExpirationDate;
+
     @CreationTimestamp
     private Date createdOn;
 

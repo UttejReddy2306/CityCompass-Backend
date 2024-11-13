@@ -24,6 +24,7 @@ public class ServicesProvidedDto {
 
     private String charge;
 
+    private String preSignedUrlLicense;
 
     private Status status;
 

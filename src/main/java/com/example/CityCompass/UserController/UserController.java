@@ -40,8 +40,8 @@ public class UserController {
 
     }
 
-    @PostMapping("/public/register/serviceProvider")
-    public String createServiceProvider(@Valid @RequestBody SpCreateRequest spCreateRequest){
+    @PostMapping(value = "/public/register/serviceProvider" , consumes = "multipart/form-data")
+    public String createServiceProvider(@Valid @ModelAttribute SpCreateRequest spCreateRequest){
         return this.userService.createSpUser(spCreateRequest);
     }
 
@@ -55,8 +55,8 @@ public class UserController {
         return this.userService.createAdmin(userCreateRequest);
     }
 
-    @PostMapping("/public/register/jobProvider")
-    public String createJobProvider(@Valid @RequestBody CompanyRegisterRequest companyRegisterRequest){
+    @PostMapping(value = "/public/register/jobProvider" , consumes = "multipart/form-data")
+    public String createJobProvider(@Valid @ModelAttribute CompanyRegisterRequest companyRegisterRequest){
         return this.userService.createJPUser(companyRegisterRequest);
     }
 
@@ -75,10 +75,10 @@ public class UserController {
                  ,request.getAttribute("username").toString()));
     }
 
-    @PatchMapping("/all/updateProfile/{email}/{number}/{name}")
-    public String updateProfile(@PathVariable("email") String email
-            , @PathVariable("number") String number
-            ,@PathVariable("name") String name, HttpServletRequest request){
+    @PatchMapping("/all/updateProfile")
+    public String updateProfile(@RequestParam(value = "email",required = false) String email
+            , @RequestParam(value = "number",required = false) String number
+            ,@RequestParam(value = "name",required = false) String name, HttpServletRequest request){
         return userService.updateProfile(email,number,name,request.getAttribute("username").toString());
     }
 
@@ -88,6 +88,22 @@ public class UserController {
                 ,request.getAttribute("username").toString());
     }
 
+
+    @PostMapping("public/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
+
+        return ResponseEntity.ok(userService.forgotPassword(email));
+    }
+
+    @PostMapping("public/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam(value = "token") String token, @RequestParam("newPassword") String newPassword) {
+        boolean resetSuccessful = userService.validateTokenAndResetPassword(token, newPassword);
+        if (resetSuccessful) {
+            return ResponseEntity.ok("Password reset successful.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid or expired token.");
+        }
+    }
 
 
 
