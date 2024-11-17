@@ -60,4 +60,17 @@ public class SaveJobsService {
         }
         return responseList;
     }
+
+    public String unSaveJob(SaveJobRequest saveJobRequest, String username) {
+        Users users = userRepository.findByUsername(username);
+        JobPosting jobPosting = jobPostRepository.findById(saveJobRequest.getJobId()).orElse(null);
+        if(users == null || jobPosting == null){
+            return "Invalid user or job posting.";
+        }
+
+        SaveJobs saveJobs = saveJobsRepository.findByUserAndJobPosting(users,jobPosting);
+        if(saveJobs == null) return "You Already Unsaved this Job Or You haven't saved this job";
+        saveJobsRepository.deleteById(saveJobs.getId());
+        return "Job Unsaved Successfully.";
+    }
 }

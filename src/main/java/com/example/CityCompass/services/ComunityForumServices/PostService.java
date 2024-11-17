@@ -1,7 +1,4 @@
 package com.example.CityCompass.services.ComunityForumServices;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.CityCompass.dtos.ComunityForumDTOs.CommentResponseDto;
 import com.example.CityCompass.dtos.ComunityForumDTOs.PostRequestDto;
 import com.example.CityCompass.dtos.ComunityForumDTOs.PostResponseDto;
@@ -14,16 +11,10 @@ import com.example.CityCompass.services.S3Service;
 import com.example.CityCompass.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 ;
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,6 +34,9 @@ public class PostService {
     private PostLikeRepository postLikeRepository;
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private PostLikeService postLikeService;
 
     public PostResponseDto createPost(PostRequestDto postRequestDto, String username) throws IOException {
         Users user = userService.getUser(username);
@@ -115,21 +109,21 @@ public class PostService {
     public List<PostResponseDto> getPostsByUser(Long userId) {
         List<Post> posts = postRepository.findByUserId(userId);
         return posts.stream().map(x ->
-            PostResponseDto.builder()
-                    .preSignedImageUrl(s3Service.generatePresignedUrl(x.getVideoPath(), 30))
-                    .postId(x.getId())
-                    .commentCount(x.getComments().size())
-                    .likeCount(x.getLikes().size())
-                    .preSignedVideoUrl(s3Service.generatePresignedUrl(x.getVideoPath(), 30))
-                    .build()
+                PostResponseDto.builder()
+                        .preSignedImageUrl(s3Service.generatePresignedUrl(x.getVideoPath(), 30))
+                        .postId(x.getId())
+                        .commentCount(x.getComments().size())
+                        .likeCount(x.getLikes().size())
+                        .preSignedVideoUrl(s3Service.generatePresignedUrl(x.getVideoPath(), 30))
+                        .build()
         ).collect(Collectors.toList());
     }
-    public List<PostResponseDto> getLatestPosts() {
+    public List<PostResponseDto> getLatestPosts(String username) {
         List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
-        return posts.stream().map(this::mapToResponseDto).collect(Collectors.toList());
+        return posts.stream().map(x -> mapToResponseDto(x,username)).toList();
     }
 
-    private PostResponseDto mapToResponseDto(Post post) {
+    private PostResponseDto mapToResponseDto(Post post, String username) {
         int likeCount = post.getLikes() != null ? post.getLikes().size() : 0;
         int commentCount = post.getComments() != null ? post.getComments().size() : 0;
         PostResponseDto dto = PostResponseDto.builder()
@@ -138,6 +132,7 @@ public class PostService {
                 .content(post.getContent())
                 .username(post.getUser().getUsername())
                 .createdAt(post.getCreatedAt())
+                .liked(postLikeService.isLikedByUser(post.getId(), username))
                 .likeCount(post.getLikes().size())
                 .commentCount(post.getComments().size())
                 .preSignedImageUrl(s3Service.generatePresignedUrl(post.getImagePath(),30))
@@ -148,21 +143,13 @@ public class PostService {
         if (post.getComments() != null && !post.getComments().isEmpty()) {
             List<CommentResponseDto> comments = post.getComments().stream()
                     .filter(comment -> comment.getParentComment() == null)
-                    .map(commentService::mapToResponseDto)
+                    .map(x -> commentService.mapToResponseDto(x,username))
                     .collect(Collectors.toList());
             dto.setComments(comments);
         }
 
         return dto;
     }
-
-
-
-
-
-
-
-
 
 
 }

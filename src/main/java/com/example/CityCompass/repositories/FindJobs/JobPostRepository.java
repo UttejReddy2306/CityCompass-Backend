@@ -37,4 +37,6 @@ public interface JobPostRepository extends JpaRepository<JobPosting, Integer> {
     List<Company> findAllByStatus(Status status);
 
     List<JobPosting> findByUserId(Users users);
+
+    List<JobPosting> findByCompanyAndStatus(Company company, Status status);
 }

@@ -2,6 +2,7 @@ package com.example.CityCompass.services.FindJobs;
 
 
 import com.example.CityCompass.FindJobsDTOs.CompanyRegisterRequest;
+import com.example.CityCompass.FindJobsDTOs.CompanyUpdateRequestDto;
 import com.example.CityCompass.models.FindJobs.Company;
 import com.example.CityCompass.models.FindJobs.JobPosting;
 import com.example.CityCompass.models.Permission;
@@ -76,11 +77,13 @@ public class CompanyService {
         return companyRepository.findByStatusAndPermission(Status.ACTIVE,Permission.Accepted);
     }
 
-    public String UpdateCompanyDetails(CompanyRegisterRequest companyRegisterRequest, Users users) {
+    public String UpdateCompanyDetails(CompanyUpdateRequestDto companyUpdateRequestDto, Users users) {
         Company company = companyRepository.findByUser(users);
-        if(companyRegisterRequest.getCompanyDetails() != null) company.setCompanyDetails(companyRegisterRequest.getCompanyDetails());
-        if(companyRegisterRequest.getLocation() != null) company.setLocation(companyRegisterRequest.getLocation());
-        if(companyRegisterRequest.getStatus() == Status.INACTIVE) {
+        if(companyUpdateRequestDto.getCompanyName() != null) company.setCompanyName(companyUpdateRequestDto.getCompanyName());
+        if(companyUpdateRequestDto.getCompanyId() != null) company.setCompanyId(companyUpdateRequestDto.getCompanyId());
+        if(companyUpdateRequestDto.getCompanyDetails() != null) company.setCompanyDetails(companyUpdateRequestDto.getCompanyDetails());
+        if(companyUpdateRequestDto.getLocation() != null) company.setLocation(companyUpdateRequestDto.getLocation());
+        if(companyUpdateRequestDto.getStatus() == Status.INACTIVE) {
             List<JobPosting> jobPostingList = jobPostRepository.findByCompany(company);
             for(JobPosting jobPosting : jobPostingList){
                 jobPosting.setStatus(Status.INACTIVE);
@@ -99,4 +102,10 @@ public class CompanyService {
     public List<Company> getAllAcceptedCompanies() {
         return companyRepository.findByPermission(Permission.Accepted);
     }
+
+    public Integer getAllActiveJobPostingCount(Users users) {
+        Company company = companyRepository.findByUser(users);
+        return jobPostRepository.findByCompanyAndStatus(company,Status.ACTIVE).size();
+    }
+
 }

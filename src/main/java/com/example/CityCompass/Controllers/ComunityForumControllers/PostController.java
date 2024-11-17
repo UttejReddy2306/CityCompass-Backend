@@ -39,8 +39,9 @@ public class PostController {
     }
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/latest")
-    public List<PostResponseDto> getLatestPosts() throws IOException {
-        return postService.getLatestPosts();
+    public List<PostResponseDto> getLatestPosts(HttpServletRequest request) throws IOException {
+
+        return postService.getLatestPosts(request.getAttribute("username").toString());
     }
 
     @DeleteMapping("/{postId}")
@@ -64,9 +65,3 @@ public class PostController {
 
 
 }
-
-
-
-
-
-

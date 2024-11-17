@@ -122,10 +122,10 @@ public class WebConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/user/all/details").hasAnyAuthority(UserType.USER.name(), UserType.SERVICE_PROVIDER.name(), UserType.ADMIN.name())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/user/all/details").hasAnyAuthority(UserType.USER.name(), UserType.SERVICE_PROVIDER.name(), UserType.ADMIN.name(),UserType.JOB_PROVIDER.name())
                         .requestMatchers("/user/admin/**").hasAuthority(UserType.ADMIN.name())
                         .requestMatchers("/user/public/**").permitAll()
-                        .requestMatchers("user/all/**").hasAnyAuthority(UserType.USER.name(), UserType.SERVICE_PROVIDER.name(), UserType.ADMIN.name()))
+                        .requestMatchers("user/all/**").hasAnyAuthority(UserType.USER.name(), UserType.SERVICE_PROVIDER.name(), UserType.ADMIN.name(),UserType.JOB_PROVIDER.name()))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/bookServices/all/**").hasAnyAuthority(UserType.USER.name(), UserType.SERVICE_PROVIDER.name(), UserType.ADMIN.name())
                         .requestMatchers("/bookServices/provider/**").hasAnyAuthority( UserType.SERVICE_PROVIDER.name())
                         .requestMatchers("/bookServices/public/**").permitAll())

@@ -19,4 +19,6 @@ public interface SaveJobsRepository extends JpaRepository<SaveJobs, Integer> {
 
     // Find active saved job by user and job posting
     SaveJobs findByUserAndJobPostingAndActiveTrue(Users user, JobPosting jobPosting);
+
+    boolean existsByUserAndJobPosting(Users users, JobPosting jobPosting);
 }

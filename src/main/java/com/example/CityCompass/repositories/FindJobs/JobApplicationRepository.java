@@ -26,4 +26,6 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     List<JobApplication> findByApplicant(Users users);
 
     JobApplication findByJobPostingAndApplicant(JobPosting jobPosting, Users applicant);
+
+    boolean existsByApplicantAndJobPosting(Users users, JobPosting jobPosting);
 }

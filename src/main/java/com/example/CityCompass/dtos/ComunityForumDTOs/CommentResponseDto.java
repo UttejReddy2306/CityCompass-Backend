@@ -18,5 +18,6 @@ public class CommentResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private int likeCount;
+    private  boolean liked;
     private List<CommentResponseDto> replies;
 }

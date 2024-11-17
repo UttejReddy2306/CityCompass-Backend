@@ -3,11 +3,13 @@ package com.example.CityCompass.services.FindJobs;
 import com.example.CityCompass.FindJobsDTOs.JobApplicationRequest;
 
 import com.example.CityCompass.models.FindJobs.ApplicationStatus;
+import com.example.CityCompass.models.FindJobs.Company;
 import com.example.CityCompass.models.FindJobs.JobApplication;
 import com.example.CityCompass.models.FindJobs.JobPosting;
 import com.example.CityCompass.models.Status;
 import com.example.CityCompass.models.UserType;
 import com.example.CityCompass.models.Users;
+import com.example.CityCompass.repositories.FindJobs.CompanyRepository;
 import com.example.CityCompass.repositories.FindJobs.JobApplicationRepository;
 import com.example.CityCompass.repositories.FindJobs.JobPostRepository;
 import com.example.CityCompass.repositories.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JobApplicationService {
@@ -29,6 +32,9 @@ public class JobApplicationService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CompanyRepository companyRepository;
 
     @Autowired
     UserService userService;
@@ -95,5 +101,33 @@ public class JobApplicationService {
         application.setStatus(newStatus);
         jobApplicationRepository.save(application);
         return "Application status updated successfully.";
+    }
+
+    public Integer getAllApplicationsUnderReview(String username) {
+        Users user = userService.getUser(username);
+        Company company = companyRepository.findByUser(user);
+        return company.getJobPostingList().stream()
+                .mapToInt(x -> x.getJobApplicationList().stream()
+                        .filter(y -> y.getStatus() == ApplicationStatus.REVIEWING)
+                        .toList().size())
+                .sum();
+    }
+
+    public Integer getTotalApplications(String username) {
+        Users user = userService.getUser(username);
+        Company company = companyRepository.findByUser(user);
+        return company.getJobPostingList().stream()
+                .mapToInt(x -> x.getJobApplicationList().size())
+                .sum();
+    }
+
+    public Integer getAllAcceptedCandidates(String username) {
+        Users user = userService.getUser(username);
+        Company company = companyRepository.findByUser(user);
+        return company.getJobPostingList().stream()
+                .mapToInt(x -> x.getJobApplicationList().stream()
+                        .filter(y -> y.getStatus() == ApplicationStatus.ACCEPTED)
+                        .toList().size())
+                .sum();
     }
 }

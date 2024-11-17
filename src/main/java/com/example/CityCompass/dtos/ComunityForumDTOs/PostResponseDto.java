@@ -66,6 +66,8 @@ public class PostResponseDto {
     private String preSignedVideoUrl;
     private List<CommentResponseDto> comments;
 
+    private boolean liked;
+
 
 
 }

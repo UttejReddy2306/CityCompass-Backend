@@ -1,5 +1,8 @@
-package com.example.CityCompass.models.FindJobs;
+package com.example.CityCompass.FindJobsDTOs;
 
+import com.example.CityCompass.models.FindJobs.Company;
+import com.example.CityCompass.models.FindJobs.EmploymentType;
+import com.example.CityCompass.models.FindJobs.JobApplication;
 import com.example.CityCompass.models.Status;
 import com.example.CityCompass.models.Users;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,55 +19,40 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-public class JobPosting {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class JobPostingResponseDto {
+
     private Integer jobId;
 
-    @Column(nullable = false)
     private String jobTitle;
 
-    @Column(nullable = false)
     private String jobDescription;
 
-    @Column(nullable = false)
     private String baseSalary;
 
-    @Column(nullable = false)
     private String experience;
 
-    @Column(nullable = false)
     private String location;
 
-    @JoinColumn(name = "user_id")
-    @ManyToOne
     private Users userId;
 
-    @JoinColumn
-    @ManyToOne
-    @JsonIgnoreProperties("jobPostingList")
+
     private Company company;
 
-    @OneToMany(mappedBy = "jobPosting")
-    @JsonIgnoreProperties("jobPosting")
+
     private List<JobApplication> jobApplicationList;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private EmploymentType employmentType;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @CreationTimestamp
+
     private Date postedOn;
 
-    @CreationTimestamp
     private Date createdAt;
 
-    @UpdateTimestamp
     private Date updatedAt;
 
+    private boolean isApplied;
+
+    private boolean isSaved;
 }

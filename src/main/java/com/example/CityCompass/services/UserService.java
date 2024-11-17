@@ -77,7 +77,9 @@ public class UserService {
     }
 
     public Users getDetails(String username) {
-        return userRepository.findByUsername(username);
+        Users users =  userRepository.findByUsername(username);
+        users.setProfilePicture(s3Service.generatePresignedUrl(users.getProfilePicture(),30));
+        return users;
     }
 
     public String createSpUser(SpCreateRequest spCreateRequest) {
@@ -153,8 +155,8 @@ public class UserService {
 
     public String updateProfile(String email, String number, String name, String username) {
         Users users = userRepository.findByUsername(username);
-        if(userRepository.existsByEmail(email) ) return "Email already Exists";
-        if( userRepository.existsByNumber(number)) return "Number Already Exists";
+        if(!users.getEmail().equals(email) && userRepository.existsByEmail(email) ) return "Email already Exists";
+        if( !users.getNumber().equals(number) && userRepository.existsByNumber(number)) return "Number Already Exists";
         if( name != null && !name.isEmpty() ) users.setName(name);
         if(email != null && !email.isEmpty()) users.setEmail(email);
         if(number != null && !number.isEmpty()) users.setNumber(number);
@@ -185,7 +187,7 @@ public class UserService {
         String resetToken = jwtService.generateResetToken();
         Users user = userOptional.get();
         user.setResetToken(resetToken);
-        user.setTokenExpirationDate(new Date(System.currentTimeMillis() + 3 * 60 * 1000)); // 1-hour expiry
+        user.setTokenExpirationDate(new Date(System.currentTimeMillis() + 15 * 60 * 1000)); // 1-hour expiry
         userRepository.save(user);
 
         // Send email (implement the sendEmail function)

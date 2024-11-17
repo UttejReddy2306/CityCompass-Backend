@@ -6,6 +6,7 @@ import com.example.CityCompass.models.FindJobs.JobApplication;
 import com.example.CityCompass.services.FindJobs.JobApplicationService;
 import com.example.CityCompass.services.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,7 @@ public class JobApplicationController {
     @GetMapping("/company/applications/{jobId}")
     public ResponseEntity<List<JobApplication>> getApplicationsByJobPosting(@PathVariable Integer jobId) {
         List<JobApplication> applications = jobApplicationService.getApplicationsByJobPosting(jobId);
+
         return ResponseEntity.ok(convert(applications));
     }
 
@@ -74,6 +76,21 @@ public class JobApplicationController {
             x.setCoverLetter(s3Service.generatePresignedUrl(x.getCoverLetter(),30));
         });
         return jobApplicationList;
+    }
+
+    @GetMapping("/company/applications/UnderReview")
+    public Integer applicationsUnderReview(HttpServletRequest request){
+        return jobApplicationService.getAllApplicationsUnderReview(request.getAttribute("username").toString());
+    }
+
+    @GetMapping("/company/totalApplications")
+    public Integer totalApplications(HttpServletRequest request){
+        return jobApplicationService.getTotalApplications(request.getAttribute("username").toString());
+    }
+
+    @GetMapping("/company/acceptedCandidates")
+    public Integer getAllAcceptedCandidates(HttpServletRequest request){
+        return jobApplicationService.getAllAcceptedCandidates(request.getAttribute("username").toString());
     }
 
 

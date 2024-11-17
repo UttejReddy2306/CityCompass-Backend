@@ -1,8 +1,11 @@
 package com.example.CityCompass.FindJobsController;
 
+import com.amazonaws.Response;
 import com.example.CityCompass.FindJobsDTOs.CompanyRegisterRequest;
+import com.example.CityCompass.FindJobsDTOs.CompanyUpdateRequestDto;
 import com.example.CityCompass.FindJobsDTOs.JobPostRequest;
 
+import com.example.CityCompass.FindJobsDTOs.JobPostingResponseDto;
 import com.example.CityCompass.models.FindJobs.Company;
 import com.example.CityCompass.models.FindJobs.JobPosting;
 import com.example.CityCompass.models.UserType;
@@ -16,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/jobPostings")
@@ -107,19 +112,35 @@ public class JobPostController {
     }
 
     @GetMapping("/public/getAllJobs")
-    public ResponseEntity<List<JobPosting>> getAllJobs(){
-        return ResponseEntity.ok(jobPostService.getAllJobs());
+    public ResponseEntity<List<JobPostingResponseDto>> getAllJobs(HttpServletRequest request){
+        List<JobPosting> jobPostingList = jobPostService.getAllJobs();
+        List<JobPostingResponseDto> jobPostingResponseDtoList  = jobPostingList.stream()
+                .map(x -> JobPostingResponseDto.builder()
+                        .jobId(x.getJobId())
+                        .jobTitle(x.getJobTitle())
+                        .jobApplicationList(x.getJobApplicationList())
+                        .jobDescription(x.getJobDescription())
+                        .postedOn(x.getPostedOn())
+                        .baseSalary(x.getBaseSalary())
+                        .experience(x.getExperience())
+                        .employmentType(x.getEmploymentType())
+                        .location(x.getLocation())
+                        .status(x.getStatus())
+                        .isApplied(jobPostService.findIfApplied(request,x.getJobId()))
+                        .isSaved(jobPostService.findIfSaved(request,x.getJobId()))
+                        .build()).toList();
+        return ResponseEntity.ok(jobPostingResponseDtoList);
     }
 
-    @GetMapping("/company/getAllJobsBYCompany")
+    @GetMapping("/company/getAllJobsByCompany")
     public ResponseEntity<List<JobPosting>> getAllJobsByCompany(HttpServletRequest request){
         return ResponseEntity.ok(jobPostService.getAllJobsByCompany(request.getAttribute("username").toString()));
     }
 
-    @PatchMapping("company/updateCompanyDetails")
-    public ResponseEntity<String> updateCompanyDetails(@RequestBody CompanyRegisterRequest companyRegisterRequest,HttpServletRequest request){
+    @PatchMapping("/company/updateCompanyDetails")
+    public ResponseEntity<String> updateCompanyDetails(@RequestBody CompanyUpdateRequestDto companyUpdateRequestDto, HttpServletRequest request){
         Users users = userService.getUser(request.getAttribute("username").toString());
-        return ResponseEntity.ok(companyService.UpdateCompanyDetails(companyRegisterRequest,users));
+        return ResponseEntity.ok(companyService.UpdateCompanyDetails(companyUpdateRequestDto,users));
     }
 
 
@@ -128,4 +149,13 @@ public class JobPostController {
         Users users = userService.getUser(request.getAttribute("username").toString());
         return ResponseEntity.ok(companyService.getCompanyDetails(users));
     }
+
+    @GetMapping("/company/activeJobPostings")
+    public ResponseEntity<Integer> getAllActiveJobPostings(HttpServletRequest request){
+        Users users = userService.getUser(request.getAttribute("username").toString());
+        return ResponseEntity.ok(companyService.getAllActiveJobPostingCount(users));
+    }
+
+
+
 }

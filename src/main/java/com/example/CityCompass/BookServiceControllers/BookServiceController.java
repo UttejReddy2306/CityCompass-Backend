@@ -89,7 +89,9 @@ public class BookServiceController {
                         .filter(z -> z.getLocalDate().isAfter(LocalDate.now()))
                         .filter(z -> !z.getTimeSlotsDtoList().isEmpty())
                         .collect(Collectors.toList()))
-                .build()).collect(Collectors.toList());
+                .build())
+                .filter(x -> !x.getDateSlotList().isEmpty())
+                .collect(Collectors.toList());
 
     }
 
@@ -218,6 +220,7 @@ public class BookServiceController {
                         .userRequestStatus(x.getUserRequestStatus())
                         .address(x.getAddress())
                         .requestedUserName(x.getRequestedUser().getName())
+                        .localDate(x.getTimeSlot()!= null ? x.getTimeSlot().getDateSlot().getLocalDate(): null)
                         .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
                         .build())
                 .filter(x -> x.getLocalTime() != null)

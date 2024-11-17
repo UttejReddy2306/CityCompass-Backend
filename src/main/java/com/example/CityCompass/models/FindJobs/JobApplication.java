@@ -1,6 +1,7 @@
 package com.example.CityCompass.models.FindJobs;
 
 import com.example.CityCompass.models.Users;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,6 +22,7 @@ public class JobApplication {
 
     @ManyToOne
     @JoinColumn(name = "job_id", nullable = false)
+    @JsonIgnoreProperties("jobApplicationList")
     private JobPosting jobPosting;
 
     @ManyToOne

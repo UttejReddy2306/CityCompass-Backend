@@ -70,6 +70,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -107,19 +108,19 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        return mapToResponseDto(comment);
+        return mapToResponseDto(comment,username);
     }
 
     // Get comments for a post
     public List<CommentResponseDto> getCommentsByPostId(Long postId) {
         List<Comment> comments = commentRepository.findRootCommentsByPostId(postId);
         return comments.stream()
-                .map(this::mapToResponseDto)
+                .map(x -> mapToResponseDto(x,null))
                 .collect(Collectors.toList());
     }
 
     // Helper method to map Comment to CommentResponseDto
-    public CommentResponseDto mapToResponseDto(Comment comment) {
+    public CommentResponseDto mapToResponseDto(Comment comment, String username) {
         int likeCount = comment.getLikes() != null ? comment.getLikes().size() : 0;
 
         CommentResponseDto dto = CommentResponseDto.builder()
@@ -128,12 +129,13 @@ public class CommentService {
                 .username(comment.getUser().getUsername())
                 .createdAt(comment.getCreatedAt())
                 .likeCount(likeCount)
+                .liked(isLikedByUser(comment.getId(), username))
                 .build();
 
         // Map replies
         if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
             List<CommentResponseDto> replies = comment.getReplies().stream()
-                    .map(this::mapToResponseDto)
+                    .map(x -> mapToResponseDto(x, username))
                     .collect(Collectors.toList());
             dto.setReplies(replies);
         }
@@ -175,5 +177,16 @@ public class CommentService {
             comment.getLikes().remove(like);
             commentLikeRepository.delete(like);
         }
+    }
+
+    public boolean isLikedByUser(Long commentId, String username) {
+        Users user = userService.getUser(username);
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        if(comment.isEmpty()) {
+            return false;
+        }
+        CommentLike commentLike = commentLikeRepository.findByCommentAndUser(comment.get(),user);
+        return commentLike != null;
+
     }
 }

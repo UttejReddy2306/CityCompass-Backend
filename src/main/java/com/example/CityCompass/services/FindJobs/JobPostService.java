@@ -8,8 +8,11 @@ import com.example.CityCompass.models.FindJobs.JobPosting;
 import com.example.CityCompass.models.Permission;
 import com.example.CityCompass.models.Status;
 import com.example.CityCompass.models.Users;
+import com.example.CityCompass.repositories.FindJobs.JobApplicationRepository;
 import com.example.CityCompass.repositories.FindJobs.JobPostRepository;
+import com.example.CityCompass.repositories.FindJobs.SaveJobsRepository;
 import com.example.CityCompass.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,11 @@ public class JobPostService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    JobApplicationRepository jobApplicationRepository;
+
+    @Autowired
+    SaveJobsRepository saveJobsRepository;
 
 
     public void createJobPost(JobPostRequest jobPostRequest, Users user, Company company) {
@@ -94,5 +102,28 @@ public class JobPostService {
     public List<JobPosting> getAllJobsByCompany(String username) {
         Users users = userService.getUser(username);
         return jobPostRepository.findByUserId(users);
+    }
+
+    public boolean findIfApplied(HttpServletRequest request, Integer jobId) {
+            Object object = request.getAttribute("username");
+            JobPosting jobPosting = jobPostRepository.findById(jobId).orElse(null);
+
+            if(object != null && jobPosting != null){
+                Users users = userService.getUser(object.toString());
+                return jobApplicationRepository.existsByApplicantAndJobPosting(users,jobPosting);
+            }
+            return false;
+
+    }
+
+    public boolean findIfSaved(HttpServletRequest request, Integer jobId) {
+        Object object = request.getAttribute("username");
+        JobPosting jobPosting = jobPostRepository.findById(jobId).orElse(null);
+        if(object != null && jobPosting != null){
+            Users users = userService.getUser(object.toString());
+            return saveJobsRepository.existsByUserAndJobPosting(users,jobPosting) ;
+        }
+        return false;
+
     }
 }
