@@ -28,6 +28,8 @@ public class ServicesProvidedDto {
 
     private String preSignedUrlLicense;
 
+    private String profilePicture;
+
     private Status status;
 
     private List<DateSlotDto> dateSlotList;

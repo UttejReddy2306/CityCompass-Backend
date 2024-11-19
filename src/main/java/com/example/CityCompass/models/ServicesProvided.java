@@ -31,7 +31,8 @@ public class ServicesProvided {
     @Enumerated(EnumType.STRING)
     private Services service;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String experience;
 
     @Column(nullable = false)

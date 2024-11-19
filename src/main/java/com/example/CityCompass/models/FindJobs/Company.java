@@ -33,7 +33,8 @@ public class Company {
     @Column(nullable = false)
     private String companyId;
 
-    @Column(length = 1000)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String companyDetails;
 
     @Column(nullable = false)

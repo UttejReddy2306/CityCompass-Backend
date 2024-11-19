@@ -64,7 +64,7 @@ public class JobApplicationController {
                         .appliedOn(x.getAppliedOn())
                         .jobPosting(x.getJobPosting())
                         .coverLetter(x.getCoverLetter())
-                        .resume(x.getResume())
+                        .resume(s3Service.generatePresignedUrl(x.getResume(),30))
                         .status(x.getStatus())
                         .profilePicture(s3Service.generatePresignedUrl(x.getJobPosting()
                                 .getCompany().getUser().getProfilePicture(),30))

@@ -29,6 +29,7 @@ public class ServicesRequestedDto {
 
     private String charge;
 
+    private String profilePicture;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate localDate;

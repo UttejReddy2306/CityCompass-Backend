@@ -21,7 +21,7 @@ public class JobApplicationRequest {
 
     private MultipartFile resume;
 
-    private MultipartFile coverLetter;
+    private String coverLetter;
 
     @Builder.Default
     private ApplicationStatus applicationStatus = ApplicationStatus.SUBMITTED;

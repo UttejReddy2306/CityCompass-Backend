@@ -57,7 +57,7 @@ public class JobApplicationService {
         if(savedJobApplication != null) return "You already applied for this Job";
         JobApplication jobApplication = jobApplicationRequest.toJobApplication(jobPosting, applicant);
         jobApplication.setResume(s3Service.createFile(jobApplicationRequest.getResume()));
-        jobApplication.setCoverLetter(s3Service.createFile(jobApplicationRequest.getCoverLetter()));
+        jobApplication.setCoverLetter(jobApplicationRequest.getCoverLetter());
         jobApplicationRepository.save(jobApplication);
         return "Job application submitted successfully.";
     }

@@ -25,13 +25,15 @@ public class JobPosting {
     @Column(nullable = false)
     private String jobTitle;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String jobDescription;
 
     @Column(nullable = false)
     private String baseSalary;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String experience;
 
     @Column(nullable = false)

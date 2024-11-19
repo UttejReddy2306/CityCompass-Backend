@@ -36,7 +36,8 @@ public class JobApplication {
     @Column(nullable = false)
     private String resume;
 
-    @Column(nullable = true)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String coverLetter;
 
     @CreationTimestamp

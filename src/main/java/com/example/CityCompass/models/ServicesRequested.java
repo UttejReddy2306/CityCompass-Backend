@@ -47,6 +47,8 @@ public class ServicesRequested {
     @ManyToOne
     private TimeSlot timeSlot;
 
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String requestedUserProblem;
 
 

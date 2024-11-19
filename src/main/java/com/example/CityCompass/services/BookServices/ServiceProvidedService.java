@@ -38,7 +38,7 @@ public class ServiceProvidedService {
     ObjectMapper mapper;
 
     @Autowired
-    S3Service s3Service;
+    private S3Service s3Service;
 
     public void createSp(Users users, SpCreateRequest spCreateRequest) {
         MultipartFile file = spCreateRequest.getLicense();

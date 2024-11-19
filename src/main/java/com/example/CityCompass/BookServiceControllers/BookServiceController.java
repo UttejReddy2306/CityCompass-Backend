@@ -11,6 +11,7 @@ import com.example.CityCompass.ResponseDtos.TimeSlotsDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.services.BookServices.ServiceProvidedService;
 import com.example.CityCompass.services.BookServices.ServiceRequestedService;
+import com.example.CityCompass.services.S3Service;
 import com.example.CityCompass.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -44,6 +45,9 @@ public class BookServiceController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    S3Service s3Service;
+
     @GetMapping("/public/getService/{service}")
     public List<ServicesProvidedDto> getService(@PathVariable("service") String service){
         return serviceProvidedService.getService(Services.valueOf(service)).stream().map(x -> ServicesProvidedDto.builder()
@@ -71,6 +75,8 @@ public class BookServiceController {
     @GetMapping("/public/getAllService")
     public List<ServicesProvidedDto> getAllService(){
         return  serviceProvidedService.getAllServices().stream().map(x -> ServicesProvidedDto.builder()
+                        .profilePicture(s3Service.
+                                generatePresignedUrl(x.getUser().getProfilePicture(),30))
                 .serviceId(x.getId())
                 .name(x.getUser().getName())
                 .serviceName(x.getService().name())
@@ -114,6 +120,8 @@ public class BookServiceController {
         return this.serviceRequestedService.getAllProviderRequests(request.getAttribute("username").toString())
                 .stream().map(x -> ServicesRequestedDto.builder()
                         .serviceRequestedId(x.getId())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getRequestedUser()
+                                .getProfilePicture(),30))
                         .requestedUserProblem(x.getRequestedUserProblem())
                         .charge(x.getServicesProvided().getCharge())
                         .service(x.getServicesProvided().getService())
@@ -137,6 +145,8 @@ public class BookServiceController {
         return this.serviceRequestedService.getAllServicesRequestedByUser(request.getAttribute("username").toString())
                 .stream().map(x -> ServicesRequestedDto.builder()
                         .serviceRequestedId(x.getId())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getProvidedUser()
+                                .getProfilePicture(),30))
                         .requestedUserProblem(x.getRequestedUserProblem())
                         .charge(x.getServicesProvided().getCharge())
                         .service(x.getServicesProvided().getService())
@@ -213,6 +223,8 @@ public class BookServiceController {
                 .stream().map(x -> ServicesRequestedDto.builder()
                         .serviceRequestedId(x.getId())
                         .requestedUserProblem(x.getRequestedUserProblem())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getRequestedUser()
+                                .getProfilePicture(),30))
                         .charge(x.getServicesProvided().getCharge())
                         .service(x.getServicesProvided().getService())
                         .permission(x.getPermission())
@@ -226,5 +238,7 @@ public class BookServiceController {
                 .filter(x -> x.getLocalTime() != null)
                 .collect(Collectors.toList());
     }
+
+
 
 }
