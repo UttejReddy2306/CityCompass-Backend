@@ -40,6 +40,7 @@ public class Users implements UserDetails {
     @Column(unique = true)
     private String email;
 
+
     private String profilePicture;
 
     @Column(unique = true)

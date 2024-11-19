@@ -12,6 +12,7 @@ import com.example.CityCompass.models.UserType;
 import com.example.CityCompass.models.Users;
 import com.example.CityCompass.services.FindJobs.CompanyService;
 import com.example.CityCompass.services.FindJobs.JobPostService;
+import com.example.CityCompass.services.S3Service;
 import com.example.CityCompass.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class JobPostController {
     @Autowired
     UserService userService;
 
+
+    @Autowired
+    S3Service s3Service;
     @PostMapping("/company/createJobPost")
     public ResponseEntity<String> createJobPosting(@RequestBody JobPostRequest jobPostRequest, HttpServletRequest request) {
         Users user = userService.getUser(request.getAttribute("username").toString());
@@ -121,6 +125,8 @@ public class JobPostController {
                         .jobApplicationList(x.getJobApplicationList())
                         .jobDescription(x.getJobDescription())
                         .postedOn(x.getPostedOn())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getCompany()
+                                .getUser().getProfilePicture(),30))
                         .baseSalary(x.getBaseSalary())
                         .experience(x.getExperience())
                         .employmentType(x.getEmploymentType())

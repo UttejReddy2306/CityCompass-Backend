@@ -150,6 +150,7 @@ public class UserService {
         Users users = userRepository.findByUsername(username);
         String filePath = s3Service.createFile(file);
         users.setProfilePicture(filePath);
+        this.userRepository.save(users);
         return s3Service.generatePresignedUrl(filePath,30);
     }
 

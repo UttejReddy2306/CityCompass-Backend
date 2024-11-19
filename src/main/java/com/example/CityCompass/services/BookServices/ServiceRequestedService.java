@@ -97,6 +97,7 @@ public class ServiceRequestedService {
             TimeSlot timeSlot = servicesRequested.getTimeSlot();
             this.timeSlotService.makingItAvailable(timeSlot);
             this.serviceRequestedRepository.save(servicesRequested);
+
             return "Cancelled Successfully";
         }
         return "Bad Request";

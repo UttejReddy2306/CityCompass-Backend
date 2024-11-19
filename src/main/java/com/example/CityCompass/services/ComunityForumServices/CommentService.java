@@ -63,6 +63,7 @@ import com.example.CityCompass.models.Users;
 import com.example.CityCompass.repositories.ComunityForumRepository.CommentLikeRepository;
 import com.example.CityCompass.repositories.ComunityForumRepository.CommentRepository;
 import com.example.CityCompass.repositories.ComunityForumRepository.PostRepository;
+import com.example.CityCompass.services.S3Service;
 import com.example.CityCompass.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,9 @@ public class CommentService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private S3Service s3Service;
 
     // Create a comment or reply
     public CommentResponseDto createComment(Long postId, Long parentCommentId, CommentRequestDto commentRequestDto, String username) {
@@ -127,6 +131,7 @@ public class CommentService {
                 .id(comment.getId())
                 .content(comment.getContent())
                 .username(comment.getUser().getUsername())
+                .profilePicture(s3Service.generatePresignedUrl(comment.getUser().getProfilePicture(),30))
                 .createdAt(comment.getCreatedAt())
                 .likeCount(likeCount)
                 .liked(isLikedByUser(comment.getId(), username))

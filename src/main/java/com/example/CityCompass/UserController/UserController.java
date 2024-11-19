@@ -89,13 +89,13 @@ public class UserController {
     }
 
 
-    @PostMapping("public/forgotPassword")
+    @PostMapping("/public/forgotPassword")
     public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
 
         return ResponseEntity.ok(userService.forgotPassword(email));
     }
 
-    @PostMapping("public/resetPassword")
+    @PostMapping("/public/resetPassword")
     public ResponseEntity<String> resetPassword(@RequestParam(value = "token") String token, @RequestParam("newPassword") String newPassword) {
         boolean resetSuccessful = userService.validateTokenAndResetPassword(token, newPassword);
         if (resetSuccessful) {

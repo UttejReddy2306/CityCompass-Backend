@@ -1,6 +1,7 @@
 package com.example.CityCompass.FindJobsController;
 
 import com.example.CityCompass.FindJobsDTOs.JobApplicationRequest;
+import com.example.CityCompass.FindJobsDTOs.JobApplicationResponseDto;
 import com.example.CityCompass.models.FindJobs.ApplicationStatus;
 import com.example.CityCompass.models.FindJobs.JobApplication;
 import com.example.CityCompass.services.FindJobs.JobApplicationService;
@@ -36,16 +37,40 @@ public class JobApplicationController {
     }
 
     @GetMapping("/users/applicant")
-    public ResponseEntity<List<JobApplication>> getApplicationsByApplicant(HttpServletRequest request) {
+    public ResponseEntity<List<JobApplicationResponseDto>> getApplicationsByApplicant(HttpServletRequest request) {
         List<JobApplication> applications = jobApplicationService.getApplicationsByApplicant(request.getAttribute("username").toString());
-        return ResponseEntity.ok(applications);
+        List<JobApplicationResponseDto> applicationResponseDtoList =
+                applications.stream().map(x -> JobApplicationResponseDto.builder()
+                        .applicant(x.getApplicant())
+                        .applicationId(x.getApplicationId())
+                        .appliedOn(x.getAppliedOn())
+                        .jobPosting(x.getJobPosting())
+                        .coverLetter(x.getCoverLetter())
+                        .resume(x.getResume())
+                        .status(x.getStatus())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getJobPosting()
+                                .getCompany().getUser().getProfilePicture(),30))
+                        .build()).toList();
+        return ResponseEntity.ok(applicationResponseDtoList);
     }
 
     @GetMapping("/company/applications/{jobId}")
-    public ResponseEntity<List<JobApplication>> getApplicationsByJobPosting(@PathVariable Integer jobId) {
+    public ResponseEntity<List<JobApplicationResponseDto>> getApplicationsByJobPosting(@PathVariable Integer jobId) {
         List<JobApplication> applications = jobApplicationService.getApplicationsByJobPosting(jobId);
+        List<JobApplicationResponseDto> applicationResponseDtoList =
+                applications.stream().map(x -> JobApplicationResponseDto.builder()
+                        .applicant(x.getApplicant())
+                        .applicationId(x.getApplicationId())
+                        .appliedOn(x.getAppliedOn())
+                        .jobPosting(x.getJobPosting())
+                        .coverLetter(x.getCoverLetter())
+                        .resume(x.getResume())
+                        .status(x.getStatus())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getJobPosting()
+                                .getCompany().getUser().getProfilePicture(),30))
+                        .build()).toList();
+        return ResponseEntity.ok(applicationResponseDtoList);
 
-        return ResponseEntity.ok(convert(applications));
     }
 
     @GetMapping("/company/status/{status}")

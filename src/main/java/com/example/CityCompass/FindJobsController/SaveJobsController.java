@@ -7,6 +7,7 @@ import com.example.CityCompass.FindJobsDTOs.SaveJobResponse;
 import com.example.CityCompass.models.FindJobs.JobPosting;
 import com.example.CityCompass.services.FindJobs.JobPostService;
 import com.example.CityCompass.services.FindJobs.SaveJobsService;
+import com.example.CityCompass.services.S3Service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ public class SaveJobsController {
 
     @Autowired
     JobPostService jobPostService;
+
+    @Autowired
+    S3Service s3Service;
 
     @PostMapping("/users/save")
     public ResponseEntity<String> saveJob(@RequestBody SaveJobRequest saveJobRequest, HttpServletRequest request) {
@@ -53,6 +57,8 @@ public class SaveJobsController {
                         .jobTitle(x.getJobTitle())
                         .jobApplicationList(x.getJobApplicationList())
                         .jobDescription(x.getJobDescription())
+                        .profilePicture(s3Service.generatePresignedUrl(x.getCompany()
+                                .getUser().getProfilePicture(),30))
                         .postedOn(x.getPostedOn())
                         .baseSalary(x.getBaseSalary())
                         .experience(x.getExperience())

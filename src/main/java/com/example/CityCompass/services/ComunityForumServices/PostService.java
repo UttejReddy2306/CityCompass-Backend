@@ -131,6 +131,7 @@ public class PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .username(post.getUser().getUsername())
+                .profilePicture(s3Service.generatePresignedUrl(post.getUser().getProfilePicture(),30))
                 .createdAt(post.getCreatedAt())
                 .liked(postLikeService.isLikedByUser(post.getId(), username))
                 .likeCount(post.getLikes().size())

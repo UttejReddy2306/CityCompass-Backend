@@ -80,6 +80,7 @@ public class CompanyService {
     public String UpdateCompanyDetails(CompanyUpdateRequestDto companyUpdateRequestDto, Users users) {
         Company company = companyRepository.findByUser(users);
         if(companyUpdateRequestDto.getCompanyName() != null) company.setCompanyName(companyUpdateRequestDto.getCompanyName());
+        if(companyUpdateRequestDto.getIndustry() != null) company.setIndustry(companyUpdateRequestDto.getIndustry());
         if(companyUpdateRequestDto.getCompanyId() != null) company.setCompanyId(companyUpdateRequestDto.getCompanyId());
         if(companyUpdateRequestDto.getCompanyDetails() != null) company.setCompanyDetails(companyUpdateRequestDto.getCompanyDetails());
         if(companyUpdateRequestDto.getLocation() != null) company.setLocation(companyUpdateRequestDto.getLocation());

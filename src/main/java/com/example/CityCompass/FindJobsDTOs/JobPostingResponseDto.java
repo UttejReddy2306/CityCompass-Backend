@@ -35,6 +35,7 @@ public class JobPostingResponseDto {
 
     private Users userId;
 
+    private String profilePicture;
 
     private Company company;
 
