@@ -47,4 +47,17 @@ public class AdminService {
     public List<Company> getAllAcceptedPermission() {
         return companyService.getAllAcceptedCompanies();
     }
+
+    public Integer getAcceptedCompaniesCount() {
+        return getAllAcceptedPermission().size();
+    }
+
+    public Integer getAcceptedServicesCount() {
+        return getAllAcceptedSp().size();
+    }
+
+    public Integer getAllJobPostings() {
+
+        return this.companyService.getAllJobPostingCount();
+    }
 }

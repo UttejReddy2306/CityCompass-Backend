@@ -76,6 +76,7 @@ public class AdminController {
                 .experience(x.getExperience())
                 .charge(x.getCharge())
                 .createdOn(x.getCreatedOn())
+                .status(x.getStatus())
                 .dateSlotList(x.getDateSlotList().stream().map(y -> DateSlotDto.builder()
                         .dateSlotId(y.getId())
                         .localDate(y.getLocalDate())
@@ -98,7 +99,24 @@ public class AdminController {
 
 
 
+    @GetMapping("/getAllAcceptedCompaniesCount")
+    public Integer getAcceptedCompaniesCount() {
+        return adminService.getAcceptedCompaniesCount();
+    }
 
+
+
+
+    @GetMapping("/getAllAcceptedServicesCount")
+    public Integer getAcceptedServicesCount() {
+        return adminService.getAcceptedServicesCount();
+    }
+
+
+    @GetMapping("/getAllJobPostings")
+    public Integer getAllJobPostings(){
+        return adminService.getAllJobPostings();
+    }
 
 
 

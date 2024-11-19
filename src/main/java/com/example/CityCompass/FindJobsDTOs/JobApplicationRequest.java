@@ -19,6 +19,7 @@ public class JobApplicationRequest {
     @NotNull
     private Integer jobId;
 
+
     private MultipartFile resume;
 
     private String coverLetter;

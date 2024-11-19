@@ -109,4 +109,7 @@ public class CompanyService {
         return jobPostRepository.findByCompanyAndStatus(company,Status.ACTIVE).size();
     }
 
+    public Integer getAllJobPostingCount() {
+        return jobPostRepository.findAllByStatus(Status.ACTIVE).size();
+    }
 }

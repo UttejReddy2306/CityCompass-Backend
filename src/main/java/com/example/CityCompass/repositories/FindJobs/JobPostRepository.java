@@ -34,7 +34,7 @@ public interface JobPostRepository extends JpaRepository<JobPosting, Integer> {
     @Query("SELECT DISTINCT jp.company FROM JobPosting jp WHERE jp.jobTitle = :jobTitle")
     List<Company> findCompaniesByJobTitle(@Param("jobTitle") String jobTitle);
 
-    List<Company> findAllByStatus(Status status);
+    List<JobPosting> findAllByStatus(Status status);
 
     List<JobPosting> findByUserId(Users users);
 

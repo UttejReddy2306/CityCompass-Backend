@@ -3,6 +3,7 @@ package com.example.CityCompass.models.FindJobs;
 import com.example.CityCompass.models.Permission;
 import com.example.CityCompass.models.Status;
 import com.example.CityCompass.models.Users;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,6 +60,7 @@ public class Company {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "company")
