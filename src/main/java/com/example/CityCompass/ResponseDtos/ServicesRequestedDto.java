@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +31,14 @@ public class ServicesRequestedDto {
     private String charge;
 
     private String profilePicture;
+
+    private List<String> imageUrlList;
+
+    private String email;
+
+    private String number;
+
+
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate localDate;

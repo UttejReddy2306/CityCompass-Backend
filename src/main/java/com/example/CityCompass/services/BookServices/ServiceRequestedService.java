@@ -5,6 +5,7 @@ import com.example.CityCompass.RequestDtos.ServiceRequestDto;
 import com.example.CityCompass.models.*;
 import com.example.CityCompass.repositories.ServiceRequestedRepository;
 import com.example.CityCompass.services.EmailService;
+import com.example.CityCompass.services.S3Service;
 import com.example.CityCompass.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class ServiceRequestedService {
     @Autowired
     DateSlotService dateSlotService;
 
+    @Autowired
+    S3Service s3Service;
+
     public String createRequest(ServiceRequestDto serviceRequestDto, String username) {
         Users requestedUser = userService.getUser(username);
         ServicesProvided servicesProvided = serviceProvidedService.getProvider(serviceRequestDto.getServiceId());
@@ -50,8 +54,14 @@ public class ServiceRequestedService {
                  .address(serviceRequestDto.getAddress())
                  .userRequestStatus(UserRequestStatus.REQUESTED)
                  .permission(Permission.Pending)
+                 .name(serviceRequestDto.getName())
+                 .email(serviceRequestDto.getEmail())
+                 .number(serviceRequestDto.getNumber())
+                 .imageList(serviceRequestDto.getMultipartFileList() != null ? serviceRequestDto.getMultipartFileList()
+                         .stream().map(x -> s3Service.createFile(x) ).toList():null)
                  .build();
          serviceRequestedRepository.save(serviceRequested);
+         timeSlotService.timeSlotRepository.save(timeSlot);
          this.emailService.sendBookingConfirmation(providerUser.getEmail(), requestedUser.getName(), servicesProvided.getService().name());
          return "Successfull";
     }
@@ -72,12 +82,18 @@ public class ServiceRequestedService {
         ServicesRequested servicesRequested = serviceRequestedRepository.findById(srId).orElse(null);
         if(servicesRequested != null) {
             if(servicesRequested.getProvidedUser() != users ) return "UnAuthorized";
-            if(decision.equals("declined")){
+            if(!servicesRequested.getPermission().equals(Permission.Completed) &&
+                    (!servicesRequested.getPermission().equals(Permission.Accepted)) &&
+                    decision.equals("declined")){
                 servicesRequested.setPermission(Permission.Rejected);
                 TimeSlot timeSlot = servicesRequested.getTimeSlot();
                 this.timeSlotService.makingItAvailable(timeSlot);
             }
-            else servicesRequested.setPermission(Permission.Accepted);
+            else if(!servicesRequested.getPermission().equals(Permission.Completed) && decision.equals("accepted")){
+                servicesRequested.setPermission(Permission.Accepted);
+            }
+            else if(!servicesRequested.getPermission().equals(Permission.Completed) && decision.equals("completed"))servicesRequested.setPermission(Permission.Completed);
+            else servicesRequested.setPermission(Permission.Rejected);
             serviceRequestedRepository.save(servicesRequested);
             this.emailService.sendProviderResponse(servicesRequested.getRequestedUser().getEmail(), servicesRequested.getProvidedUser().getName()
                     , servicesRequested.getServicesProvided().getService().name(), decision.equals("accepted"));
@@ -123,5 +139,10 @@ public class ServiceRequestedService {
     public List<ServicesRequested> getAllAcceptedServiceRequests(String username) {
         Users users = userService.getUser(username);
         return serviceRequestedRepository.findByPermissionOrderByUpdatedOnDesc(Permission.Accepted);
+    }
+
+    public List<ServicesRequested> getAllProviderRequestsByStatus(String username, Permission status) {
+        Users users =userService.getUser(username);
+        return serviceRequestedRepository.findByProvidedUserAndPermission(users,status);
     }
 }

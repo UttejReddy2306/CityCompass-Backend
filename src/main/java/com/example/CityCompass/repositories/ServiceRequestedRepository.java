@@ -34,4 +34,8 @@ public interface ServiceRequestedRepository extends JpaRepository<ServicesReques
     List<ServicesRequested> findByProvidedUserAndUserRequestStatusAndPermission(Users users, UserRequestStatus userRequestStatus, Permission permission);
 
     List<ServicesRequested> findByPermissionOrderByUpdatedOnDesc(Permission permission);
+
+
+
+    List<ServicesRequested> findByProvidedUserAndPermission(Users users, Permission status);
 }

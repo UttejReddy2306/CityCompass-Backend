@@ -8,4 +8,8 @@ public enum UserRequestStatus {
     APPROVED,
 
     CANCELLED;
+
+    public boolean equalsIgnoreCase(String status) {
+        return true;
+    }
 }

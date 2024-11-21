@@ -101,8 +101,8 @@ public class BookServiceController {
 
     }
 
-    @PostMapping("/all/requestService")
-    public String requestService(@Valid @RequestBody ServiceRequestDto serviceRequestDto, HttpServletRequest request)
+    @PostMapping(value = "/all/requestService",  consumes = "multipart/form-data")
+    public String requestService( @ModelAttribute ServiceRequestDto serviceRequestDto, HttpServletRequest request)
     {
         return serviceRequestedService.createRequest(serviceRequestDto,request.getAttribute("username").toString());
 
@@ -126,9 +126,13 @@ public class BookServiceController {
                         .charge(x.getServicesProvided().getCharge())
                         .service(x.getServicesProvided().getService())
                         .permission(x.getPermission())
-                        .providerUserName(x.getProvidedUser().getName())
+                        .providerUserName(x.getName())
                         .userRequestStatus(x.getUserRequestStatus())
                         .address(x.getAddress())
+                        .email(x.getEmail())
+                        .number(x.getNumber())
+                        .imageUrlList(x.getImageList() != null ? x.getImageList().stream()
+                                .map(y -> s3Service.generatePresignedUrl(y,30)).toList() : null)
                         .requestedUserName(x.getRequestedUser().getName())
                         .localDate(x.getTimeSlot()!= null ? x.getTimeSlot().getDateSlot().getLocalDate(): null)
                         .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
@@ -142,7 +146,8 @@ public class BookServiceController {
 
     @GetMapping("/all/getAllServiceRequestsByUser")
     public List<ServicesRequestedDto> getAllServicesRequestedByUser(HttpServletRequest request){
-        return this.serviceRequestedService.getAllServicesRequestedByUser(request.getAttribute("username").toString())
+        List<ServicesRequested> servicesRequestedList = this.serviceRequestedService.getAllServicesRequestedByUser(request.getAttribute("username").toString());
+        return servicesRequestedList
                 .stream().map(x -> ServicesRequestedDto.builder()
                         .serviceRequestedId(x.getId())
                         .profilePicture(s3Service.generatePresignedUrl(x.getProvidedUser()
@@ -154,11 +159,18 @@ public class BookServiceController {
                         .providerUserName(x.getProvidedUser().getName())
                         .userRequestStatus(x.getUserRequestStatus())
                         .address(x.getAddress())
+                        .email(x.getEmail())
+                        .number(x.getNumber())
+                        .imageUrlList(x.getImageList() != null ? x.getImageList().stream()
+                                .map(y -> s3Service.generatePresignedUrl(y,30)).toList() : null)
                         .requestedUserName(x.getRequestedUser().getName())
+                        .localDate(x.getTimeSlot()!= null ? x.getTimeSlot().getDateSlot().getLocalDate(): null)
                         .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
                         .build())
                 .filter(x -> x.getLocalTime() != null)
-                .collect(Collectors.toList());
+                .filter(x -> !x.getUserRequestStatus().equals(UserRequestStatus.CANCELLED))
+                .toList();
+
     }
 
     @PatchMapping("/provider/updateResponse/{srId}/{decision}")
@@ -231,6 +243,10 @@ public class BookServiceController {
                         .providerUserName(x.getProvidedUser().getName())
                         .userRequestStatus(x.getUserRequestStatus())
                         .address(x.getAddress())
+                        .email(x.getEmail())
+                        .number(x.getNumber())
+                        .imageUrlList(x.getImageList() != null ? x.getImageList().stream()
+                                .map(y -> s3Service.generatePresignedUrl(y,30)).toList() : null)
                         .requestedUserName(x.getRequestedUser().getName())
                         .localDate(x.getTimeSlot()!= null ? x.getTimeSlot().getDateSlot().getLocalDate(): null)
                         .localTime(x.getTimeSlot() != null ? x.getTimeSlot().getStartTime() : null)
@@ -239,6 +255,18 @@ public class BookServiceController {
                 .collect(Collectors.toList());
     }
 
+
+    @GetMapping("/provider/getRequestsCountByStatus")
+    public Integer getRequestsCountByStatus(
+            @RequestParam("status") Permission status,
+            HttpServletRequest request) {
+        return this.serviceRequestedService
+                .getAllProviderRequestsByStatus(request.getAttribute("username").toString(),status).size();
+
+
+
+
+    }
 
 
 }
