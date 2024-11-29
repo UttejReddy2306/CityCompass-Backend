@@ -122,6 +122,7 @@ public class JobPostController {
                 .map(x -> JobPostingResponseDto.builder()
                         .jobId(x.getJobId())
                         .jobTitle(x.getJobTitle())
+                        .company(x.getCompany())
                         .jobApplicationList(x.getJobApplicationList())
                         .jobDescription(x.getJobDescription())
                         .postedOn(x.getPostedOn())
